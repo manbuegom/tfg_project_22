@@ -15,23 +15,16 @@
         const r = await fhir.get(`/Observation?subject=Patient/${id}`);
         data = await r.data?.entry;
         tam = r.data.total;
+
+        const a = await fhir.get(`/Patient/${id}`);
+        const dataA = a.data;
+        if (dataA.deceasedDateTime != undefined) {
+            deceased = true;
+        }
+
         if (tam != 0) {
             patientRef = data[0].resource.subject.reference;
-            const a = await fhir.get(`/Patient/${id}`);
-            const dataA = a.data;
-            debugger
-            if(dataA.deceasedDateTime != undefined){
-                deceased = true;
-                debugger
-            }
         } else {
-            const a = await fhir.get(`/Patient/${id}`);
-            const dataA = a.data;
-            debugger
-            if(dataA.deceasedDateTime != undefined){
-                deceased = true;
-                debugger
-            }
             let queryString = window.location.href
                 .split("observationList")[1]
                 .split("/")[1];
@@ -48,17 +41,19 @@
         {#if tam != 0}
             {#each data as observation}
                 <div
-                    class="grid grid-flow-col auto-cols-min grid-cols-2 bg-lime-200 shadow-lg text-lg text-left py-6 px-4"
+                    class="grid grid-cols-3 bg-lime-200 shadow-lg text-lg text-left py-6 px-4"
                 >
                     <Link
                         to={`observationForm/${observation.resource.id}`}
-                        class="text-lime-700 p-4 font-bold"
+                        class="text-lime-700 font-bold"
                         ><i class="fa-solid fa-id-card" /> Observation Details
                     </Link>
-                    {observation.resource.code.coding[0].system}
-                    {observation.resource.code.coding[0].code}<br />
-                    {observation.resource.valueQuantity.value}
-                    {observation.resource.valueQuantity.unit})
+                    Status: {observation.resource.status}
+                    <div>
+                    {observation.resource.issued
+                        .replace("T", " at ")
+                        .replace("+01:00", "")}
+                    </div>
                 </div>
             {/each}
         {:else}
