@@ -12,6 +12,11 @@
   import AddSuccessO from "./components/addSuccessO.svelte";
   import EditSuccessO from "./components/editSuccessO.svelte";
   import DeleteSuccessO from "./components/deleteSuccessO.svelte";
+  import PractitionerRegistration from "./components/PractitionerRegistration.svelte";
+  import ListPractitioners from "./components/ListPractitioners.svelte";
+  import AddSuccessPractitioner from "./components/addSuccessPractitioner.svelte";
+  import EditSuccessPractitioner from "./components/editSuccessPractitioner.svelte";
+  import DeleteSuccessPractitioner from "./components/deleteSuccessPractitioner.svelte";
 </script>
 
 <TailwindCss />
@@ -20,7 +25,7 @@
   <nav class="bg-lime-200 shadow-lg">
     <div class="max-w-6xl mx-auto px-4">
       <div class="flex justify-between">
-        <div class="flex space-x-7">
+        <div class="flex space-x-5">
           <a
             href="/"
             class="flex text-gray-700 text-lg font-semibold hover:text-green-800 transition duration-300 items-center py-4 px-2"
@@ -29,17 +34,26 @@
               src="\src\assets\svelte.png"
               alt="Logo"
               class="h-12 w-12 mr-2"
-            />Patient Management Site</a
+            />HC-M</a
           >
           <div class="hidden md:flex items-center space-x-2">
             <Link
         
               class="py-4 px-8 text-gray-700 text-lg font-semibold hover:text-green-800 transition duration-300"
-              to="patients"><i class="fa-solid fa-bars"></i> List</Link
+              to="patients"><i class="fa-solid fa-bars"></i> Patients</Link
             >
             <Link
               class="py-4 px-8 text-gray-700 text-lg font-semibold hover:text-green-800 transition duration-300"
-              to="patientForm"><i class="fa-solid fa-user-pen"></i> Patient
+              to="patientForm"><i class="fa-solid fa-user-plus"></i> New Patient
+              
+            </Link>
+            <Link
+              class="py-4 px-8 text-gray-700 text-lg font-semibold hover:text-green-800 transition duration-300"
+              to="practitioners"><i class="fa-solid fa-bars"></i> Practitioners</Link
+            >
+            <Link
+              class="py-4 px-8 text-gray-700 text-lg font-semibold hover:text-green-800 transition duration-300"
+              to="practitionerForm"><i class="fa-solid fa-user-doctor"></i> New Practitioner
               
             </Link>
             <Link
@@ -64,6 +78,12 @@
     <Route path="observationForm/added" component={AddSuccessO} />
     <Route path="observationForm/updated" component={EditSuccessO} />
     <Route path="observationForm/deleted" component={DeleteSuccessO} />
+    <Route path="/practitioners" component={ListPractitioners} />
+    <Route path="practitionerForm" component={PractitionerRegistration} />
+    <Route path="practitionerForm/:id" component={PractitionerRegistration} />
+    <Route path="practitionerForm/added" component={AddSuccessPractitioner} />
+    <Route path="practitionerForm/updated" component={EditSuccessPractitioner} />
+    <Route path="practitionerForm/deleted" component={DeleteSuccessPractitioner} />
   </Layout>
 </Router>
 
