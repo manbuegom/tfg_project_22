@@ -23,7 +23,6 @@
                     document.getElementById("genderAux")
                 )).value;
             }
-            debugger;
             await fhir.put(`/Practitioner/${id}`, { ...e.detail, id });
             navigate("updated", { replace: true });
         } else {
@@ -38,22 +37,28 @@
     async function handleDelete(e: any) {
         loading = true;
         if (id) {
-            await fhir.delete(`/Practitioner/${id}`, { ...e.detail, id });
-            navigate("deleted", { replace: true });
+            if (hasRole) {
+                alert(
+                    "Please, delete the role related to this practitioner before pressing this again."
+                );
+            } else {
+                await fhir.delete(`/Practitioner/${id}`, { ...e.detail, id });
+                navigate("deleted", { replace: true });
+            }
         }
         loading = false;
     }
 
     async function handleGender(e: any) {
-        debugger;
         (<HTMLInputElement>document.getElementById("genderAux")).value =
             e.target.id;
     }
 
-    let observationOn;
     let deleteOn;
     let actualGender;
     let lastGenderRegistered;
+    let hasRole;
+    let dataA;
     onMount(async () => {
         if (id) {
             const r = await fhir.get(`/Practitioner/${id}`);
@@ -61,51 +66,19 @@
             form.import(resource);
             lastGenderRegistered = resource.gender;
             let actualGenderFL = lastGenderRegistered.charAt(0).toUpperCase();
-            disableFormIfDiceased(resource.deceasedDateTime);
             actualGender =
                 "" + actualGenderFL + lastGenderRegistered.slice(1) + "";
 
             deleteOn = true;
-            observationOn = true;
+            const a = await fhir.get(
+                `/PractitionerRole?practitioner=Practitioner/${id}`
+            );
+            dataA = await a.data;
+            if (dataA.total != 0) {
+                hasRole = true;
+            }
         }
     });
-
-    let deceasedCheck;
-    async function disableFormIfDiceased(e: any) {
-        if (e != undefined) {
-            debugger;
-            deceasedCheck = true;
-            (<HTMLInputElement>document.getElementById("name")).disabled = e;
-            (<HTMLInputElement>document.getElementById("family")).disabled = e;
-            (<HTMLInputElement>document.getElementById("birthdate")).disabled =
-                e;
-            (<HTMLInputElement>(
-                document.getElementById("deceasedDate")
-            )).disabled = e;
-            (<HTMLInputElement>document.getElementById("male")).disabled = e;
-            (<HTMLInputElement>document.getElementById("female")).disabled = e;
-            (<HTMLInputElement>document.getElementById("other")).disabled = e;
-            (<HTMLInputElement>document.getElementById("address")).disabled = e;
-            (<HTMLInputElement>document.getElementById("city")).disabled = e;
-            (<HTMLInputElement>document.getElementById("state")).disabled = e;
-            (<HTMLInputElement>document.getElementById("postalCode")).disabled =
-                e;
-            (<HTMLInputElement>document.getElementById("emailCheck")).disabled =
-                e;
-            (<HTMLInputElement>document.getElementById("contact")).disabled = e;
-            (<HTMLInputElement>document.getElementById("submit")).disabled = e;
-        }
-    }
-
-    // let deceasedDate;
-    // function displayDeathDate() {
-    //     debugger
-    //     if (!deceasedDate || deceasedDate == undefined) {
-    //         deceasedDate = true;
-    //     } else {
-    //         deceasedDate = false;
-    //     }
-    // }
 </script>
 
 <h1 class="text-center text-4xl text-gray-700 font-semibold py-4">
@@ -118,8 +91,8 @@
         class="flex flex-col gap-4 py-12 text-gray-700 text-lg font-semibold focus-within:text-lime-700"
         on:mb-submit={handleSubmit}
     >
-        <mb-context path="resourceType" data="Patient" />
-        <div class="grid gap-x-24 gap-y-6 grid-cols-2">
+        <mb-context path="resourceType" data="Practitioner" />
+        <div class="grid gap-x-8 gap-y-6 grid-cols-2">
             <mb-input required id="name" path="name[0].given" label="Name" />
             <mb-input
                 required
@@ -136,11 +109,6 @@
                     path="birthDate"
                 />
                 <br />
-                <mb-date
-                    id="deceasedDate"
-                    label="Death Date"
-                    path="deceasedDateTime"
-                />
             </div>
             <div>
                 <p class="text-base py-2">Gender:</p>
@@ -166,6 +134,8 @@
                     </p>
                 {/if}
             </div>
+        </div>
+        <div class="grid gap-x-8 gap-y-6 grid-cols-4">
             <mb-input
                 required
                 id="address"
@@ -195,22 +165,61 @@
         </div>
         <div>
             <br />
+            {#if hasRole}
+                <p class="text-base py-2">Practitioner Role:</p>
+                <br />
+                <div class="text-lg flex flex-col gap-4">
+                    {#each dataA.entry as pRole}
+                        <div
+                            class="grid grid-cols-2 bg-lime-200 shadow-lg text-left p-4"
+                        >
+                            <Link
+                                to={`practRoleForm/${pRole.resource.id}`}
+                                class="text-lime-700 font-bold"
+                                >Role details
+                            </Link>
+                            {pRole.resource.specialty[0].coding[0].display}
+                        </div>
+                    {/each}
+                </div>
+            {:else}
+                <p>No registered roles.</p>
+            {/if}
+        </div>
+        <div>
+            <br />
             <mb-submit>
-                <button id="submit" class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                <button
+                    id="submit"
+                    class="rounded-xl px-4 py-2 bg-lime-700 text-white"
                     >Submit</button
                 >
             </mb-submit>
-            <Link to="patients">
+            <Link to="practitioners">
                 <button class="rounded-xl px-4 py-2 bg-lime-700 text-white"
                     >Practitioner's list</button
                 >
             </Link>
             {#if deleteOn}
-                <button
-                    class="rounded-xl px-4 py-2 bg-orange-900 text-white"
-                    on:click={handleDelete}
-                    >Delete Practitioner Data
-                </button>
+                <Link to="practRoleForm?Practitioner/{id}">
+                    <button
+                        class="rounded-xl px-4 py-2 bg-orange-500 text-white"
+                        >Add Practitioner Role</button
+                    >
+                </Link>
+                {#if hasRole}
+                    <button
+                        class="rounded-xl px-4 py-2 bg-orange-900 text-white"
+                        on:click={handleDelete}
+                        >Delete Practitioner Data
+                    </button>
+                {:else}
+                    <button
+                        class="rounded-xl px-4 py-2 bg-orange-900 text-white"
+                        on:click={handleDelete}
+                        >Delete Practitioner Data
+                    </button>
+                {/if}
             {/if}
         </div>
     </mb-fhir-form>

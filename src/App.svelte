@@ -17,6 +17,10 @@
   import AddSuccessPractitioner from "./components/addSuccessPractitioner.svelte";
   import EditSuccessPractitioner from "./components/editSuccessPractitioner.svelte";
   import DeleteSuccessPractitioner from "./components/deleteSuccessPractitioner.svelte";
+  import PractRoleRegistration from "./components/PractRoleRegistration.svelte";
+  import AddSuccessPractRole from "./components/addSuccessPractRole.svelte";
+  import EditSuccessPractRole from "./components/editSuccessPractRole.svelte";
+  import DeleteSuccessPractRole from "./components/deleteSuccessPractRole.svelte";
 </script>
 
 <TailwindCss />
@@ -56,10 +60,6 @@
               to="practitionerForm"><i class="fa-solid fa-user-doctor"></i> New Practitioner
               
             </Link>
-            <Link
-              class="py-4 px-8 text-gray-700 text-lg font-semibold hover:text-green-800 transition duration-300"
-              to="blog">Blog</Link
-            >
           </div>
         </div>
       </div>
@@ -84,6 +84,11 @@
     <Route path="practitionerForm/added" component={AddSuccessPractitioner} />
     <Route path="practitionerForm/updated" component={EditSuccessPractitioner} />
     <Route path="practitionerForm/deleted" component={DeleteSuccessPractitioner} />
+    <Route path="practRoleForm" component={PractRoleRegistration} />
+    <Route path="practRoleForm/:id" component={PractRoleRegistration} />
+    <Route path="practRoleForm/added" component={AddSuccessPractRole} />
+    <Route path="practRoleForm/updated" component={EditSuccessPractRole} />
+    <Route path="practRoleForm/deleted" component={DeleteSuccessPractRole} />
   </Layout>
 </Router>
 
