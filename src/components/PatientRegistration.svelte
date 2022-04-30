@@ -23,13 +23,19 @@
                     document.getElementById("genderAux")
                 )).value;
             }
-            debugger;
             await fhir.put(`/Patient/${id}`, { ...e.detail, id });
             navigate("updated", { replace: true });
         } else {
-            e.detail.gender = (<HTMLInputElement>(
-                document.getElementById("genderAux")
-            )).value;
+            if (
+                (<HTMLInputElement>document.getElementById("genderAux"))
+                    .value == undefined
+            ) {
+                e.detail.gender = "other";
+            } else {
+                e.detail.gender = (<HTMLInputElement>(
+                    document.getElementById("genderAux")
+                )).value;
+            }
             await fhir.post("/Patient", e.detail);
             navigate("patientForm/added", { replace: true });
         }
@@ -45,7 +51,6 @@
     }
 
     async function handleGender(e: any) {
-        debugger;
         (<HTMLInputElement>document.getElementById("genderAux")).value =
             e.target.id;
     }
@@ -73,7 +78,6 @@
     let deceasedCheck;
     async function disableFormIfDiceased(e: any) {
         if (e != undefined) {
-            debugger;
             deceasedCheck = true;
             (<HTMLInputElement>document.getElementById("name")).disabled = e;
             (<HTMLInputElement>document.getElementById("family")).disabled = e;

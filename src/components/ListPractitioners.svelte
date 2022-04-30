@@ -12,17 +12,6 @@
         tam = r.data.total;
     });
 
-    function age(e: any) {
-        var today = new Date();
-        var birthday = new Date(e.birthDate);
-        var age = today.getFullYear() - birthday.getFullYear();
-        var m = today.getMonth() - birthday.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < birthday.getDate())) {
-            age--;
-        }
-        return age;
-    }
-
     function genderFormat(e: any) {
         let genderFL = e.charAt(0).toUpperCase();
         return "" + genderFL + e.slice(1) + "";
@@ -49,9 +38,9 @@
                     </div>
                     {practitioner.resource.name[0].given}
                     {practitioner.resource.name[0].family}<br />
-                    {age(practitioner.resource)} ({practitioner.resource
-                        .birthDate})
-                    <br />{genderFormat(practitioner.resource.gender)}
+                    {practitioner.resource.qualification[0].identifier[0].value}
+                    <br />
+                    {genderFormat(practitioner.resource.gender)} 
                     <div>
                         {practitioner.resource.telecom[0].value}
                         {#if practitioner.resource.telecom[1] == undefined}

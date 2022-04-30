@@ -26,9 +26,27 @@
             await fhir.put(`/Practitioner/${id}`, { ...e.detail, id });
             navigate("updated", { replace: true });
         } else {
-            e.detail.gender = (<HTMLInputElement>(
-                document.getElementById("genderAux")
-            )).value;
+            if (
+                (<HTMLInputElement>document.getElementById("genderAux"))
+                    .value == undefined
+            ) {
+                e.detail.gender = "other";
+            } else {
+                e.detail.gender = (<HTMLInputElement>(
+                    document.getElementById("genderAux")
+                )).value;
+            }
+
+            e.detail.qualification = [
+                {
+                    identifier: [
+                        {
+                            value: "Undefined Role",
+                        },
+                    ],
+                },
+            ];
+
             await fhir.post("/Practitioner", e.detail);
             navigate("practitionerForm/added", { replace: true });
         }
@@ -46,6 +64,39 @@
                 navigate("deleted", { replace: true });
             }
         }
+        loading = false;
+    }
+
+    async function handleDeletePR(e: any) {
+        loading = true;
+        let idPR = e.currentTarget.id;
+        await fhir.delete(`/PractitionerRole/${idPR}`, { ...e.detail, idPR });
+
+        let auxVar;
+        const r = await fhir.get(`/Practitioner/${id}`);
+        const resource = r.data;
+
+        let pract = {
+            resourceType: "Practitioner",
+            id: `${id}`,
+            qualification: [
+                {
+                    identifier: [
+                        {
+                            value: "Undefined Role",
+                        },
+                    ],
+                },
+            ],
+        };
+
+        await fhir.put(`/Practitioner/${id}`, {
+            ...resource,
+            ...pract,
+            id,
+        });
+        navigate("deleted", { replace: true });
+
         loading = false;
     }
 
@@ -102,6 +153,11 @@
             />
             <div>
                 <mb-input hidden path="gender" id="genderAux" />
+                <mb-input
+                    hidden
+                    path="qualification[0].identifier[0].value"
+                    id="quaAux"
+                />
                 <mb-date
                     required
                     id="birthdate"
@@ -127,7 +183,6 @@
                     id="other"
                     on:click={handleGender}>Other</button
                 >
-
                 {#if deleteOn}
                     <p class="text-base py-2">
                         Last gender registered: {actualGender}.
@@ -135,6 +190,7 @@
                 {/if}
             </div>
         </div>
+        <br />
         <div class="grid gap-x-8 gap-y-6 grid-cols-4">
             <mb-input
                 required
@@ -164,28 +220,35 @@
             />
         </div>
         <div>
-            <br />
             {#if hasRole}
                 <p class="text-base py-2">Practitioner Role:</p>
-                <br />
                 <div class="text-lg flex flex-col gap-4">
                     {#each dataA.entry as pRole}
-                        <div
-                            class="grid grid-cols-2 bg-lime-200 shadow-lg text-left p-4"
-                        >
-                            <Link
-                                to={`practRoleForm/${pRole.resource.id}`}
+                        <div>
+                            <button
                                 class="text-lime-700 font-bold"
-                                >Role details
-                            </Link>
+                                on:click={handleDeletePR}
+                                id={pRole.resource.id}
+                            >
+                                <i class="fa-solid fa-trash-can" />
+                            </button>
+                            -
                             {pRole.resource.specialty[0].coding[0].display}
                         </div>
                     {/each}
                 </div>
-            {:else}
+            {:else if deleteOn}
                 <p>No registered roles.</p>
             {/if}
         </div>
+        {#if !hasRole}
+            <Link to="practRoleForm?Practitioner/{id}">
+                <button
+                    class="rounded-lg px-4 py-1 bg-lime-700 text-base text-white"
+                    >Add Practitioner Role</button
+                >
+            </Link>
+        {/if}
         <div>
             <br />
             <mb-submit>
@@ -201,12 +264,6 @@
                 >
             </Link>
             {#if deleteOn}
-                <Link to="practRoleForm?Practitioner/{id}">
-                    <button
-                        class="rounded-xl px-4 py-2 bg-orange-500 text-white"
-                        >Add Practitioner Role</button
-                    >
-                </Link>
                 {#if hasRole}
                     <button
                         class="rounded-xl px-4 py-2 bg-orange-900 text-white"

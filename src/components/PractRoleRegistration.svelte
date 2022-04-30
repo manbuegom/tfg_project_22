@@ -25,6 +25,39 @@
                 reference: `${queryString}`,
             };
             await fhir.post("/PractitionerRole", e.detail);
+
+            let qualification = e.detail.specialty[0].coding[0].display;
+            let auxVar;
+            const r = await fhir.get(
+                `/Practitioner/${queryStringPractitionerId}`
+            );
+            const resource = r.data;
+            if (resource.qualification[0].identifier[0] == undefined) {
+                auxVar = " ";
+            } else {
+                auxVar = resource.qualification[0].identifier[0].value
+
+            }
+            let pract = {
+                resourceType: "Practitioner",
+                id: `${queryStringPractitionerId}`,
+                qualification: [
+                    {
+                        identifier: [
+                            {
+                                value: `${qualification}`,
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            await fhir.put(`/Practitioner/${queryStringPractitionerId}`, {
+                ...resource,
+                ...pract,
+                queryStringPractitionerId,
+            });
+
             navigate("practRoleForm/added", { replace: true });
         }
         loading = false;
@@ -51,9 +84,9 @@
             referencePract = resource.practitioner.reference;
             nameString = await getName(referenceIdPract);
             deleteOn = true;
-        }else{
-        nameString = await getName(queryStringPractitionerId);
-    }
+        } else {
+            nameString = await getName(queryStringPractitionerId);
+        }
     });
     async function getName(e: any) {
         const a = await fhir.get(`/Practitioner/${e}`);
@@ -76,7 +109,7 @@
     >
         <mb-context path="resourceType" data="PractitionerRole" />
 
-        <mb-input
+        <!-- <mb-input
             required
             id="specialty"
             path="specialty[0].coding[0].system"
@@ -87,12 +120,12 @@
             id="code"
             path="specialty[0].coding[0].code"
             label="Code"
-        />
+        /> -->
         <mb-input
             required
             id="display"
             path="specialty[0].coding[0].display"
-            label="Display"
+            label="Role"
         />
 
         <div>
