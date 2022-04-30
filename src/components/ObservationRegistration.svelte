@@ -108,10 +108,10 @@
             const dataA = a.data;
             if (dataA.deceasedDateTime != undefined) {
                 disableFormIfDiceased(true);
-            }debugger
-        }
+            }
+        }else{
         nameString = await getName(queryStringPatientId);
-    });
+    }});
     async function disableFormIfDiceased(e: any) {
         (<HTMLInputElement>document.getElementById("status")).disabled = e;
         (<HTMLInputElement>document.getElementById("system")).disabled = e;
