@@ -191,20 +191,20 @@
             </div>
         </div>
         <br />
-        <div class="grid gap-x-8 gap-y-6 grid-cols-4">
+        <div class="grid gap-x-8 gap-y-6 grid-cols-4">      
             <mb-input
                 required
-                id="address"
-                path="address[0].line"
-                label="Address"
+                id="country"
+                path="address[0].country"
+                label="Country"
             />
-            <mb-input required id="city" path="address[0].city" label="City" />
+            <mb-input required id="city" path="address[0].city" label="City, Capital" />
             <mb-input
-                required
-                id="state"
-                path="address[0].state"
-                label="State"
-            />
+            required
+            id="address"
+            path="address[0].line"
+            label="Address (Street, Nº)"
+        />    
             <mb-input
                 required
                 id="postalCode"
@@ -242,12 +242,14 @@
             {/if}
         </div>
         {#if !hasRole}
+        {#if deleteOn}
             <Link to="practRoleForm?Practitioner/{id}">
                 <button
                     class="rounded-lg px-4 py-1 bg-lime-700 text-base text-white"
                     >Add Practitioner Role</button
                 >
             </Link>
+        {/if}
         {/if}
         <div>
             <br />

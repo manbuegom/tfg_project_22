@@ -30,7 +30,7 @@
                 (<HTMLInputElement>document.getElementById("genderAux"))
                     .value == undefined
             ) {
-                e.detail.gender = "other";
+                e.detail.gender = "unknown";
             } else {
                 e.detail.gender = (<HTMLInputElement>(
                     document.getElementById("genderAux")
@@ -72,6 +72,10 @@
 
             deleteOn = true;
             observationOn = true;
+        } else {
+            (<HTMLInputElement>(
+                document.getElementById("deceasedDate")
+            )).hidden = true;
         }
     });
 
@@ -91,7 +95,7 @@
             (<HTMLInputElement>document.getElementById("other")).disabled = e;
             (<HTMLInputElement>document.getElementById("address")).disabled = e;
             (<HTMLInputElement>document.getElementById("city")).disabled = e;
-            (<HTMLInputElement>document.getElementById("state")).disabled = e;
+            (<HTMLInputElement>document.getElementById("country")).disabled = e;
             (<HTMLInputElement>document.getElementById("postalCode")).disabled =
                 e;
             (<HTMLInputElement>document.getElementById("emailCheck")).disabled =
@@ -101,15 +105,7 @@
         }
     }
 
-    // let deceasedDate;
-    // function displayDeathDate() {
-    //     debugger
-    //     if (!deceasedDate || deceasedDate == undefined) {
-    //         deceasedDate = true;
-    //     } else {
-    //         deceasedDate = false;
-    //     }
-    // }
+
 </script>
 
 <h1 class="text-center text-4xl text-gray-700 font-semibold py-4">
@@ -172,17 +168,17 @@
             </div>
             <mb-input
                 required
-                id="address"
-                path="address[0].line"
-                label="Address"
+                id="country"
+                path="address[0].country"
+                label="Country"
             />
-            <mb-input required id="city" path="address[0].city" label="City" />
             <mb-input
                 required
-                id="state"
-                path="address[0].state"
-                label="State"
+                id="address"
+                path="address[0].line"
+                label="Address (Street, Nº)"
             />
+            <mb-input required id="city" path="address[0].city" label="City, Capital"/>
             <mb-input
                 required
                 id="postalCode"
@@ -200,7 +196,9 @@
         <div>
             <br />
             <mb-submit>
-                <button id="submit" class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                <button
+                    id="submit"
+                    class="rounded-xl px-4 py-2 bg-lime-700 text-white"
                     >Submit</button
                 >
             </mb-submit>

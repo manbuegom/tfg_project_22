@@ -9,14 +9,52 @@
     export let id;
     let form;
     let queryStringPatientId = window.location.search.split("/")[1];
+    let dataP = [];
+    let tam;
 
     async function handleSubmit(e: any) {
         loading = true;
         if (id) {
+            if (
+                (<HTMLInputElement>document.getElementById("statusAux"))
+                    .value == lastStatusRegistered ||
+                (<HTMLInputElement>document.getElementById("statusAux"))
+                    .value == undefined
+            ) {
+                e.detail.status = lastStatusRegistered;
+            } else {
+                e.detail.status = (<HTMLInputElement>(
+                    document.getElementById("statusAux")
+                )).value;
+            }
             e.detail.issued = createdNoFormat;
+            e.detail.performer = [
+                    {
+                        reference: `${performerDetailRef}`,
+                    },
+                ];
+
             await fhir.put(`/Observation/${id}`, { ...e.detail, id });
             navigate(`updated?${referenceIdPatient}`, { replace: true });
         } else {
+            if (
+                (<HTMLInputElement>document.getElementById("statusAux"))
+                    .value == undefined
+            ) {
+                e.detail.status = "preliminary";
+            } else {
+                e.detail.status = (<HTMLInputElement>(
+                    document.getElementById("statusAux")
+                )).value;
+            }
+            if (e.detail.performer != undefined) {
+                e.detail.performer = [
+                    {
+                        reference: `${e.detail.performer[0].reference.code}`,
+                    },
+                ];
+            }
+
             const queryString = window.location.search.split("?")[1];
             e.detail.subject = {
                 display: `${nameString}`,
@@ -78,14 +116,12 @@
         }
         loading = false;
     }
-    let referenceIdPatient;
-    let createdNoFormat;
-    let created;
-    let modified;
-    let issuedOn;
-    let deleteOn;
-    let lastModOn;
-    let nameString;
+
+    let issuedOn, created, createdNoFormat, deleteOn, modified, lastModOn;
+
+    let nameString, nameStringP;
+    let lastStatusRegistered, actualStatus;
+    let practitionerId, referenceIdPatient, performerDetailRef;
 
     onMount(async () => {
         if (id) {
@@ -96,7 +132,14 @@
             lastModOn = true;
             deleteOn = true;
             referenceIdPatient = resource.subject.reference.split("/")[1];
-            nameString = await getName(referenceIdPatient);
+            nameString = await getName(`/Patient/${referenceIdPatient}`);
+            practitionerId = resource.performer[0].reference.split("/")[1];
+            nameStringP = await getName(`/Practitioner/${practitionerId}`);
+            lastStatusRegistered = resource.status;
+            let actualStatusFL = lastStatusRegistered.charAt(0).toUpperCase();
+            actualStatus =
+                "" + actualStatusFL + lastStatusRegistered.slice(1) + "";
+            
             modified = resource.meta.lastUpdated
                 .split(".")[0]
                 .replace("T", " at ");
@@ -104,18 +147,25 @@
             created = resource.issued
                 .replace("T", " at ")
                 .replace("+01:00", ".");
+            
+            
+            performerDetailRef = resource.performer[0].reference;
+
+
             const a = await fhir.get(`/Patient/${referenceIdPatient}`);
             const dataA = a.data;
             if (dataA.deceasedDateTime != undefined) {
                 disableFormIfDiceased(true);
             }
-        }else{
-        nameString = await getName(queryStringPatientId);
-    }});
+        } else {
+            nameString = await getName(`/Patient/${queryStringPatientId}`);
+        }
+    });
     async function disableFormIfDiceased(e: any) {
-        (<HTMLInputElement>document.getElementById("status")).disabled = e;
-        (<HTMLInputElement>document.getElementById("system")).disabled = e;
-        (<HTMLInputElement>document.getElementById("code")).disabled = e;
+        (<HTMLInputElement>document.getElementById("preliminary")).disabled = e;
+        (<HTMLInputElement>document.getElementById("final")).disabled = e;
+        (<HTMLInputElement>document.getElementById("amended")).disabled = e;
+        (<HTMLInputElement>document.getElementById("statusAux")).disabled = e;
         (<HTMLInputElement>document.getElementById("display")).disabled = e;
         (<HTMLInputElement>document.getElementById("vq")).disabled = e;
         (<HTMLInputElement>document.getElementById("units")).disabled = e;
@@ -123,12 +173,23 @@
         (<HTMLInputElement>document.getElementById("submit")).disabled = e;
     }
     async function getName(e: any) {
-        const a = await fhir.get(`/Patient/${e}`);
+        const a = await fhir.get(e);
         const dataA = a.data;
         let string =
             "" + dataA.name[0].given + "" + " " + dataA.name[0].family + "";
         return string;
     }
+
+    async function handleStatus(e: any) {
+        (<HTMLInputElement>document.getElementById("statusAux")).value =
+            e.target.id;
+    }
+
+    onMount(async () => {
+        const p = await fhir.get("/Practitioner");
+        dataP = await p.data?.entry;
+        tam = p.data.total;
+    });
 </script>
 
 <h1 class="text-center text-4xl text-gray-700 font-semibold py-4">
@@ -142,39 +203,114 @@
         on:mb-submit={handleSubmit}
     >
         <mb-context path="resourceType" data="Observation" />
-        <p>
-            Patient name:
-            {#if deleteOn}
-                <Link
-                    to={`patientForm/${referenceIdPatient}`}
-                    class="text-lime-700 p-4 font-bold"
-                    >{nameString}
-                </Link>
-            {:else}
-                <Link
-                    to={`patientForm/${queryStringPatientId}`}
-                    class="text-lime-700 p-4 font-bold"
-                    >{nameString}
-                </Link>
-            {/if}
-        </p>
-        <mb-input required id="status" path="status" label="Status" />
+        <div class="grid gap-x-24 gap-y-6 grid-cols-2">
+            <p>
+                Patient name:
+                {#if deleteOn}
+                    <Link
+                        to={`patientForm/${referenceIdPatient}`}
+                        class="text-lime-700 p-4 font-bold"
+                        >{nameString}
+                    </Link>
+                {:else}
+                    <Link
+                        to={`patientForm/${queryStringPatientId}`}
+                        class="text-lime-700 p-4 font-bold"
+                        >{nameString}
+                    </Link>
+                {/if}
+            </p>
+
+            <p>
+                {#if deleteOn}
+                    Performer name:
+                    <Link
+                        to={`practitionerForm/${practitionerId}`}
+                        class="text-lime-700 p-4 font-bold"
+                        >{nameStringP}
+                    </Link>
+                {/if}
+            </p>
+        </div>
+        <div class="grid gap-x-24 gap-y-6 grid-cols-2">
+            <div>
+                <p class="text-base py-2">Status:</p>
+                <button
+                    class="text-white font-semibold bg-lime-700 focus:ring-4 focus:ring-gray-700 rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2"
+                    id="preliminary"
+                    on:click={handleStatus}>Preliminary</button
+                >
+                <button
+                    class="text-white font-semibold bg-lime-700 focus:ring-4 focus:ring-gray-700 rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2"
+                    id="final"
+                    on:click={handleStatus}>Final</button
+                >
+                <button
+                    class="text-white font-semibold bg-lime-700 focus:ring-4 focus:ring-gray-700 rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2"
+                    id="amended"
+                    on:click={handleStatus}>Amended</button
+                >
+
+                {#if deleteOn}
+                    <p class="text-base py-2">
+                        Last status registered: {actualStatus}.
+                    </p>
+                {/if}
+            </div>
+            <div>
+                {#if !deleteOn}
+                    <p class="text-base py-2">Performer:</p>
+                    <mb-select
+                        required
+                        id="performer"
+                        path="performer[0].reference"
+                        placeholder="Select practitioner"
+                    >
+                        {#if tam != 0}
+                            {#each dataP as practitioner}
+                                <mb-option
+                                    value={`Practitioner/${practitioner.resource.id}`}
+                                    label={`${practitioner.resource.name[0].given} ${practitioner.resource.name[0].family}`}
+                                />
+                            {/each}
+                        {:else}
+                            <p>No registered practitioners.</p>
+                        {/if}
+                    </mb-select>
+                {/if}
+            </div>
+
+            <!--  
         <mb-input
             required
             id="system"
             path="code.coding[0].system"
             label="System"
         />
-        <mb-input required id="code" path="code.coding[0].code" label="Code" />
-        <mb-input required id="display" path="code.coding[0].display" label="Display" />
-        <mb-count
+        <mb-input required id="code" path="code.coding[0].code" label="Code" />-->
+        </div>
+        <mb-input hidden path="status" id="statusAux" />
+        <mb-input
             required
-            id="vq"
-            path="valueQuantity.value"
-            label="Value Quantity"
+            id="display"
+            path="code.coding[0].display"
+            label="Observation title"
         />
-        <mb-input required id="units" path="valueQuantity.unit" label="Units" />
-        <mb-input required id="note" path="note[0].text" label="Comments" />
+        <mb-input
+            required
+            id="note"
+            path="note[0].text"
+            textarea
+            label="Description and Comments "
+        />
+        <div class="grid gap-x-24 gap-y-6 grid-cols-2">
+            <mb-input
+                id="vq"
+                path="valueQuantity.value"
+                label="Value Quantity"
+            />
+            <mb-input id="units" path="valueQuantity.unit" label="Units" />
+        </div>
         <mb-input hidden id="name" path="subject.display" label="Name" />
         <mb-input hidden path="subject.reference" label="Subject" />
         {#if issuedOn}
@@ -189,7 +325,6 @@
                 <br />{modified}
             </p>
         {/if}
-
         <div />
         <div>
             <br />
