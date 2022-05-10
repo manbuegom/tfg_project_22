@@ -31,50 +31,61 @@
             patientRef = `Patient/${queryString}`;
         }
     });
+
+    function statusFormat(e: any) {
+        let statusFL = e.charAt(0).toUpperCase();
+        return "" + statusFL + e.slice(1) + "";
+    }
 </script>
 
-<div class="container">
-    <h1 class="text-center text-4xl text-gray-700 font-semibold mb-16">
-        Patient's Observations
-    </h1>
-    <div class="text-center text-xl flex flex-col gap-4">
-        {#if tam != 0}
-            {#each data as observation}
-                <div
-                    class="grid grid-cols-3 bg-lime-200 shadow-lg text-lg text-left py-6 px-4"
-                >
+<h1 class="text-center text-4xl text-gray-700 font-semibold mb-16">
+    Patient's Observations
+</h1>
+<div class="text-center text-xl flex flex-col gap-4">
+    {#if tam != 0}
+        {#each data as observation}
+            <div
+                class="grid grid-cols-3 bg-lime-200 shadow-lg text-xl text-left py-6"
+            >   
+                <div>
+                    <br />
                     <Link
                         to={`observationForm/${observation.resource.id}`}
-                        class="text-lime-700 font-bold"
+                        class="text-lime-700 font-bold p-4"
                         ><i class="fa-solid fa-id-card" /> Observation Details
                     </Link>
-                    Status: {observation.resource.status}
-                    <div>
-                    {observation.resource.issued
+                </div>
+                <br />
+                {observation.resource.code.coding[0].display}
+                <br />
+                <div>
+                    Status: {statusFormat(observation.resource.status)}
+                    <br>
+                    <br />
+                    Created: {observation.resource.issued
                         .replace("T", " at ")
                         .replace("+01:00", "")}
-                    </div>
                 </div>
-            {/each}
-        {:else}
-            <p>No registered observations for the current patient.</p>
-        {/if}
-        <br />
-    </div>
-    <div>
-        {#if !deceased}
-            <Link to={`observationForm?${patientRef}`}>
-                <button
-                    id="submit"
-                    class="rounded-xl px-4 py-2 bg-lime-700 text-white"
-                    >New Observation</button
-                >
-            </Link>
-        {/if}
-        <Link to="patients">
-            <button class="rounded-xl px-4 py-2 bg-lime-700 text-white"
-                >Patient's list</button
+            </div>
+        {/each}
+    {:else}
+        <p>No registered observations for the current patient.</p>
+    {/if}
+    <br />
+</div>
+<div>
+    {#if !deceased}
+        <Link to={`observationForm?${patientRef}`}>
+            <button
+                id="submit"
+                class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                >New Observation</button
             >
         </Link>
-    </div>
+    {/if}
+    <Link to="patients">
+        <button class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+            >Patient's list</button
+        >
+    </Link>
 </div>
