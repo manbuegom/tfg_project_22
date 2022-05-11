@@ -8,56 +8,15 @@
     let loading: boolean = false;
     export let id;
     let form;
-    let queryStringPractitionerId = window.location.search.split("/")[1];
+    let dataPR = [];
+    let tamPR;
     async function handleSubmit(e: any) {
         loading = true;
         if (id) {
-            e.detail.practitioner = {
-                display: `${nameString}`,
-                reference: `${referencePract}`,
-            };
             await fhir.put(`/PractitionerRole/${id}`, { ...e.detail, id });
             navigate("updated", { replace: true });
         } else {
-            const queryString = window.location.search.split("?")[1];
-            e.detail.practitioner = {
-                display: `${nameString}`,
-                reference: `${queryString}`,
-            };
             await fhir.post("/PractitionerRole", e.detail);
-
-            let qualification = e.detail.specialty[0].coding[0].display;
-            let auxVar;
-            const r = await fhir.get(
-                `/Practitioner/${queryStringPractitionerId}`
-            );
-            const resource = r.data;
-            if (resource.qualification[0].identifier[0] == undefined) {
-                auxVar = " ";
-            } else {
-                auxVar = resource.qualification[0].identifier[0].value
-
-            }
-            let pract = {
-                resourceType: "Practitioner",
-                id: `${queryStringPractitionerId}`,
-                qualification: [
-                    {
-                        identifier: [
-                            {
-                                value: `${qualification}`,
-                            },
-                        ],
-                    },
-                ],
-            };
-
-            await fhir.put(`/Practitioner/${queryStringPractitionerId}`, {
-                ...resource,
-                ...pract,
-                queryStringPractitionerId,
-            });
-
             navigate("practRoleForm/added", { replace: true });
         }
         loading = false;
@@ -71,35 +30,32 @@
         loading = false;
     }
 
-    let referenceIdPract;
-    let referencePract;
-    let nameString;
     let deleteOn;
     onMount(async () => {
         if (id) {
             const r = await fhir.get(`/PractitionerRole/${id}`);
             const resource = r.data;
             form.import(resource);
-            referenceIdPract = resource.practitioner.reference.split("/")[1];
-            referencePract = resource.practitioner.reference;
-            nameString = await getName(referenceIdPract);
             deleteOn = true;
         } else {
-            nameString = await getName(queryStringPractitionerId);
+            const p = await fhir.get("/PractitionerRole");
+            dataPR = await p.data?.entry;
+            tamPR = p.data.total;
         }
     });
-    async function getName(e: any) {
-        const a = await fhir.get(`/Practitioner/${e}`);
-        const dataA = a.data;
-        let string =
-            "" + dataA.name[0].given + "" + " " + dataA.name[0].family + "";
-        return string;
-    }
 </script>
 
 <h1 class="text-center text-4xl text-gray-700 font-semibold py-4">
     Practitioner Role Registration
 </h1>
+{#if id}
+    <br /><br /><br />
+    <p class="text-2xl font-semibold bg-lime-200 shadow-lg text-left p-6">
+        <u>Important Information:</u> <br /><br /> Once you update or delete a role,
+        you must update practitioners who have that role assigned.
+    </p>
+{/if}
+
 <div>
     <mb-fhir-form
         id="form"
@@ -109,18 +65,6 @@
     >
         <mb-context path="resourceType" data="PractitionerRole" />
 
-        <!-- <mb-input
-            required
-            id="specialty"
-            path="specialty[0].coding[0].system"
-            label="System"
-        />
-        <mb-input
-            required
-            id="code"
-            path="specialty[0].coding[0].code"
-            label="Code"
-        /> -->
         <mb-input
             required
             id="display"
@@ -137,19 +81,7 @@
                     >Submit</button
                 >
             </mb-submit>
-            {#if !deleteOn}
-                <Link to={`practitionerForm/${queryStringPractitionerId}`}>
-                    <button class="rounded-xl px-4 py-2 bg-lime-700 text-white"
-                        >Back to practitioner</button
-                    >
-                </Link>
-            {/if}
             {#if deleteOn}
-                <Link to={`practitionerForm/${referenceIdPract}`}>
-                    <button class="rounded-xl px-4 py-2 bg-lime-700 text-white"
-                        >Back to practitioner</button
-                    >
-                </Link>
                 <button
                     class="rounded-xl px-4 py-2 bg-orange-900 text-white"
                     on:click={handleDelete}
@@ -157,5 +89,31 @@
                 </button>
             {/if}
         </div>
+        <br />
+        {#if !deleteOn}
+            <h1 class="text-center text-4xl text-gray-700 font-semibold mb-16">
+                Current Registered Roles
+            </h1>
+            <div class="text-center text-xl grid grid-cols-3 gap-12">
+                {#if tamPR != 0}
+                    {#each dataPR as practRole}
+                        <div
+                            class="bg-lime-200 shadow-lg text-xl text-left p-12"
+                        >
+                            <Link
+                                to={`practRoleForm/${practRole.resource.id}`}
+                                class="text-lime-700 p-4 font-bold"
+                                ><i class="fa-solid fa-id-card" />
+                            </Link>
+
+                            {practRole.resource.specialty[0].coding[0].display}
+                        </div>
+                    {/each}
+                {:else}
+                    <p class="text-xl">No registered roles.</p>
+                {/if}
+                <br />
+            </div>
+        {/if}
     </mb-fhir-form>
 </div>

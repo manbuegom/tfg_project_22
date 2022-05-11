@@ -23,6 +23,33 @@
                     document.getElementById("genderAux")
                 )).value;
             }
+
+            if (
+                e.detail.qualification[0].identifier[0].value.value !=
+                    "Undefined Role" &&
+                e.detail.qualification[0].identifier[0].value.value != undefined
+            ) {
+                e.detail.qualification = [
+                    {
+                        identifier: [
+                            {
+                                value: `${e.detail.qualification[0].identifier[0].value.value}`,
+                            },
+                        ],
+                    },
+                ];
+            } else {
+                e.detail.qualification = [
+                    {
+                        identifier: [
+                            {
+                                value: `${roleName}`,
+                            },
+                        ],
+                    },
+                ];
+            }
+
             await fhir.put(`/Practitioner/${id}`, { ...e.detail, id });
             navigate("updated", { replace: true });
         } else {
@@ -36,16 +63,27 @@
                     document.getElementById("genderAux")
                 )).value;
             }
-
-            e.detail.qualification = [
-                {
-                    identifier: [
-                        {
-                            value: "Undefined Role",
-                        },
-                    ],
-                },
-            ];
+            if (e.detail.qualification != undefined) {
+                e.detail.qualification = [
+                    {
+                        identifier: [
+                            {
+                                value: `${e.detail.qualification[0].identifier[0].value.value}`,
+                            },
+                        ],
+                    },
+                ];
+            } else {
+                e.detail.qualification = [
+                    {
+                        identifier: [
+                            {
+                                value: `${roleName}`,
+                            },
+                        ],
+                    },
+                ];
+            }
 
             await fhir.post("/Practitioner", e.detail);
             navigate("practitionerForm/added", { replace: true });
@@ -55,48 +93,9 @@
     async function handleDelete(e: any) {
         loading = true;
         if (id) {
-            if (hasRole) {
-                alert(
-                    "Please, delete the role related to this practitioner before pressing this again."
-                );
-            } else {
-                await fhir.delete(`/Practitioner/${id}`, { ...e.detail, id });
-                navigate("deleted", { replace: true });
-            }
+            await fhir.delete(`/Practitioner/${id}`, { ...e.detail, id });
+            navigate("deleted", { replace: true });
         }
-        loading = false;
-    }
-
-    async function handleDeletePR(e: any) {
-        loading = true;
-        let idPR = e.currentTarget.id;
-        await fhir.delete(`/PractitionerRole/${idPR}`, { ...e.detail, idPR });
-
-        let auxVar;
-        const r = await fhir.get(`/Practitioner/${id}`);
-        const resource = r.data;
-
-        let pract = {
-            resourceType: "Practitioner",
-            id: `${id}`,
-            qualification: [
-                {
-                    identifier: [
-                        {
-                            value: "Undefined Role",
-                        },
-                    ],
-                },
-            ],
-        };
-
-        await fhir.put(`/Practitioner/${id}`, {
-            ...resource,
-            ...pract,
-            id,
-        });
-        navigate("deleted", { replace: true });
-
         loading = false;
     }
 
@@ -108,8 +107,9 @@
     let deleteOn;
     let actualGender;
     let lastGenderRegistered;
-    let hasRole;
-    let dataA;
+    let hasRole, roleName;
+    let dataP = [];
+    let tam;
     onMount(async () => {
         if (id) {
             const r = await fhir.get(`/Practitioner/${id}`);
@@ -121,14 +121,13 @@
                 "" + actualGenderFL + lastGenderRegistered.slice(1) + "";
 
             deleteOn = true;
-            const a = await fhir.get(
-                `/PractitionerRole?practitioner=Practitioner/${id}`
-            );
-            dataA = await a.data;
-            if (dataA.total != 0) {
-                hasRole = true;
-            }
+            roleName = resource.qualification[0].identifier[0].value;
+        } else {
+            roleName = "Undefined Role";
         }
+        const p = await fhir.get("/PractitionerRole");
+        dataP = await p.data?.entry;
+        tam = p.data.total;
     });
 </script>
 
@@ -191,20 +190,25 @@
             </div>
         </div>
         <br />
-        <div class="grid gap-x-8 gap-y-6 grid-cols-4">      
+        <div class="grid gap-x-8 gap-y-6 grid-cols-4">
             <mb-input
                 required
                 id="country"
                 path="address[0].country"
                 label="Country"
             />
-            <mb-input required id="city" path="address[0].city" label="City, Capital" />
             <mb-input
-            required
-            id="address"
-            path="address[0].line"
-            label="Address (Street, Nº)"
-        />    
+                required
+                id="city"
+                path="address[0].city"
+                label="City, Capital"
+            />
+            <mb-input
+                required
+                id="address"
+                path="address[0].line"
+                label="Address (Street, Nº)"
+            />
             <mb-input
                 required
                 id="postalCode"
@@ -220,37 +224,33 @@
             />
         </div>
         <div>
-            {#if hasRole}
-                <p class="text-base py-2">Practitioner Role:</p>
-                <div class="text-lg flex flex-col gap-4">
-                    {#each dataA.entry as pRole}
-                        <div>
-                            <button
-                                class="text-lime-700 font-bold"
-                                on:click={handleDeletePR}
-                                id={pRole.resource.id}
-                            >
-                                <i class="fa-solid fa-trash-can" />
-                            </button>
-                            -
-                            {pRole.resource.specialty[0].coding[0].display}
-                        </div>
-                    {/each}
-                </div>
-            {:else if deleteOn}
-                <p>No registered roles.</p>
+            <br />
+            {#if deleteOn}
+                <p class="text-2xl py-2">Practitioner Role: {roleName}</p>
+                <br />
+            {:else}
+                <p class="text-base py-2">Practitioner Role</p>
+                <br />
             {/if}
+
+            <mb-select
+                id="practRole"
+                path="qualification[0].identifier[0].value"
+                placeholder="Select a role or update the current one"
+            >
+                {#if tam != 0}
+                    {#each dataP as practRole}
+                        <mb-option
+                            value={`${practRole.resource.specialty[0].coding[0].display}`}
+                            label={`${practRole.resource.specialty[0].coding[0].display}`}
+                        />
+                    {/each}
+                {:else}
+                    <br />
+                    <p>No registered roles.</p>
+                {/if}
+            </mb-select>
         </div>
-        {#if !hasRole}
-        {#if deleteOn}
-            <Link to="practRoleForm?Practitioner/{id}">
-                <button
-                    class="rounded-lg px-4 py-1 bg-lime-700 text-base text-white"
-                    >Add Practitioner Role</button
-                >
-            </Link>
-        {/if}
-        {/if}
         <div>
             <br />
             <mb-submit>
@@ -266,19 +266,11 @@
                 >
             </Link>
             {#if deleteOn}
-                {#if hasRole}
-                    <button
-                        class="rounded-xl px-4 py-2 bg-orange-900 text-white"
-                        on:click={handleDelete}
-                        >Delete Practitioner Data
-                    </button>
-                {:else}
-                    <button
-                        class="rounded-xl px-4 py-2 bg-orange-900 text-white"
-                        on:click={handleDelete}
-                        >Delete Practitioner Data
-                    </button>
-                {/if}
+                <button
+                    class="rounded-xl px-4 py-2 bg-orange-900 text-white"
+                    on:click={handleDelete}
+                    >Delete Practitioner Data
+                </button>
             {/if}
         </div>
     </mb-fhir-form>
