@@ -27,7 +27,7 @@
 
 <Router>
   <nav class="bg-lime-200 shadow-lg">
-    <div class="max-w-6xl mx-auto px-28">
+    <div class="max-w-6xl mx-auto">
       <div class="flex space-x-5">
         <a
           href="/"
@@ -58,6 +58,11 @@
             class="py-4 px-8 text-gray-700 text-lg font-semibold hover:text-green-800 transition duration-300"
             to="practitionerForm"
             ><i class="fa-solid fa-user-doctor" /> New Practitioner
+          </Link>
+          <Link
+            class="py-4 px-8 text-gray-700 text-lg font-semibold hover:text-green-800 transition duration-300"
+            to="practRoleForm"
+            ><i class="fa-solid fa-notes-medical" /> New Pract. Role
           </Link>
         </div>
       </div>
