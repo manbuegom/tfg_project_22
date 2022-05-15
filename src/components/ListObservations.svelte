@@ -83,7 +83,12 @@
             >
         </Link>
     {/if}
-    <Link to="patients">
+    <Link to={`patientForm/${id}`}>
+        <button class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+            >Patient's details</button
+        >
+    </Link>
+    <Link to=patients>
         <button class="rounded-xl px-4 py-2 bg-lime-700 text-white"
             >Patient's list</button
         >

@@ -43,6 +43,23 @@
             tamPR = p.data.total;
         }
     });
+
+    let errorOn = false;
+    async function checkValid(e: any) {
+        (<HTMLInputElement>document.getElementById("submit")).disabled =
+            errorOn;
+        if (/[0-9!,!¡"·$%&-()=?¿|@#~€]/.test(e.currentTarget.__data + e.key)) {
+            (<HTMLInputElement>document.getElementById("submit")).disabled =
+                true;
+
+            errorOn = true;
+        } else {
+            (<HTMLInputElement>document.getElementById("submit")).disabled =
+                false;
+
+            errorOn = false;
+        }
+    }
 </script>
 
 <h1 class="text-center text-4xl text-gray-700 font-semibold py-4">
@@ -70,8 +87,15 @@
             id="display"
             path="specialty[0].coding[0].display"
             label="Role"
+            on:keypress={checkValid}
         />
-
+        {#if errorOn}
+            <p
+                class="text-xl font-semibold bg-red-200 shadow-lg border-4 border-red-700 text-left p-6 text-red-600"
+            >
+                <u>Check input field:</u> <br /><br /> Numbers or symbols not allowed.
+            </p>
+        {/if}
         <div>
             <br />
             <mb-submit>
@@ -82,6 +106,11 @@
                 >
             </mb-submit>
             {#if deleteOn}
+                <Link to=practRoleForm>
+                    <button class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                        >Back to list</button
+                    >
+                </Link>
                 <button
                     class="rounded-xl px-4 py-2 bg-orange-900 text-white"
                     on:click={handleDelete}
@@ -94,7 +123,7 @@
             <h1 class="text-center text-4xl text-gray-700 font-semibold mb-16">
                 Current Registered Roles
             </h1>
-            <div class="text-center text-xl grid grid-cols-3 gap-12">
+            <div class="text-center text-xl grid grid-cols-2 gap-8">
                 {#if tamPR != 0}
                     {#each dataPR as practRole}
                         <div

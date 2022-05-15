@@ -73,9 +73,8 @@
             deleteOn = true;
             observationOn = true;
         } else {
-            (<HTMLInputElement>(
-                document.getElementById("deceasedDate")
-            )).hidden = true;
+            (<HTMLInputElement>document.getElementById("deceasedDate")).hidden =
+                true;
         }
     });
 
@@ -105,7 +104,38 @@
         }
     }
 
+    let errorOn = false;
+    async function checkValid(e: any) {
+        (<HTMLInputElement>document.getElementById("submit")).disabled =
+            errorOn;
+        if ((e.currentTarget.__data + e.key).length > 15) {
+            (<HTMLInputElement>document.getElementById("submit")).disabled =
+                true;
 
+            errorOn = true;
+        } else {
+            (<HTMLInputElement>document.getElementById("submit")).disabled =
+                false;
+
+            errorOn = false;
+        }
+    }
+    let errorOnE;
+    async function checkValidEmail(e: any) {
+        (<HTMLInputElement>document.getElementById("submit")).disabled =
+            errorOnE;
+        if (!(e.currentTarget.__data + e.key).includes("@") || !(e.currentTarget.__data + e.key).split("@")[1].includes(".")) {
+            (<HTMLInputElement>document.getElementById("submit")).disabled =
+                true;
+
+                errorOnE = true;
+        } else {
+            (<HTMLInputElement>document.getElementById("submit")).disabled =
+                false;
+
+                errorOnE = false;
+        }
+    }
 </script>
 
 <h1 class="text-center text-4xl text-gray-700 font-semibold py-4">
@@ -178,21 +208,54 @@
                 path="address[0].line"
                 label="Address (Street, Nº)"
             />
-            <mb-input required id="city" path="address[0].city" label="City, Capital"/>
+            <mb-input
+                required
+                id="city"
+                path="address[0].city"
+                label="City, Capital"
+            />
             <mb-input
                 required
                 id="postalCode"
                 path="address[0].postalCode"
                 label="Postal Code"
             />
-            <mb-input path="telecom[1].value" label="Email" id="emailCheck" />
             <mb-count
                 required
                 id="contact"
                 path="telecom[0].value"
                 label="Contact"
+                on:keypress={checkValid}
             />
+            <mb-input
+                path="telecom[1].value"
+                label="Email"
+                id="emailCheck"
+                on:keypress={checkValidEmail}
+            />
+            <p class="text-sm text-gray-500 ">
+                <i><u>Check contact field:</u> Max lenght: 15</i>
+            </p>
+            <p class="text-sm text-gray-500 ">
+                <i
+                    ><u>Check Email field:</u> Symbols '@'' and '.' must be used.</i
+                >
+            </p>
         </div>
+        {#if errorOn}
+            <p
+                class="text-xl font-semibold bg-red-200 shadow-lg border-4 border-red-700 text-left p-6 text-red-600"
+            >
+                <u>Check contact field:</u> <br /><br /> Max lenght: 15.
+            </p>
+        {/if}
+        {#if errorOnE}
+            <p
+                class="text-xl font-semibold bg-red-200 shadow-lg border-4 border-red-700 text-left p-6 text-red-600"
+            >
+                <u>Check email field:</u> <br /><br /> Either @ or '.' missing.
+            </p>
+        {/if}
         <div>
             <br />
             <mb-submit>

@@ -29,13 +29,21 @@
             }
             e.detail.issued = createdNoFormat;
             e.detail.performer = [
-                    {
-                        reference: `${performerDetailRef}`,
-                    },
-                ];
+                {
+                    reference: `${performerDetailRef}`,
+                },
+            ];
 
-            await fhir.put(`/Observation/${id}`, { ...e.detail, id });
-            navigate(`updated?${referenceIdPatient}`, { replace: true });
+            e.detail.code.coding[0].code = calculateInstant();
+            try {
+                await fhir.put(`/Observation/${id}`, { ...e.detail, id });
+                navigate(`updated?${referenceIdPatient}`, { replace: true });
+            } catch (error) {
+                errorOn = true;
+                navigate(`/observationForm/${id}`, {
+                    replace: true,
+                });
+            }
         } else {
             if (
                 (<HTMLInputElement>document.getElementById("statusAux"))
@@ -54,17 +62,25 @@
                     },
                 ];
             }
-
             const queryString = window.location.search.split("?")[1];
             e.detail.subject = {
                 display: `${nameString}`,
                 reference: `${queryString}`,
             };
             e.detail.issued = calculateInstant();
-            await fhir.post("/Observation", e.detail);
-            navigate(`observationForm/added?${queryString.split("/")[1]}`, {
-                replace: true,
-            });
+            e.detail.code.coding[0].code = calculateInstant();
+            try {
+                await fhir.post("/Observation", e.detail);
+                navigate(`observationForm/added?${queryString.split("/")[1]}`, {
+                    replace: true,
+                });
+            } catch (error) {
+                errorOn = true;
+
+                navigate(`/observationForm?${queryString}`, {
+                    replace: true,
+                });
+            }
         }
         loading = false;
     }
@@ -139,18 +155,17 @@
             let actualStatusFL = lastStatusRegistered.charAt(0).toUpperCase();
             actualStatus =
                 "" + actualStatusFL + lastStatusRegistered.slice(1) + "";
-            
-            modified = resource.meta.lastUpdated
+
+            modified = resource.code.coding[0].code
                 .split(".")[0]
-                .replace("T", " at ");
+                .replace("T", " at ")
+                .replace("+01:00", ".");
             createdNoFormat = resource.issued;
             created = resource.issued
                 .replace("T", " at ")
                 .replace("+01:00", ".");
-            
-            
-            performerDetailRef = resource.performer[0].reference;
 
+            performerDetailRef = resource.performer[0].reference;
 
             const a = await fhir.get(`/Patient/${referenceIdPatient}`);
             const dataA = a.data;
@@ -190,6 +205,33 @@
         dataP = await p.data?.entry;
         tam = p.data.total;
     });
+
+    let errorOn = false;
+    async function checkValid(e: any) {
+        (<HTMLInputElement>document.getElementById("submit")).disabled =
+            errorOn;
+
+        if (
+            /[a-zA-Z!,!"·$%&/()=?¿|@#~€ ]/.test(e.currentTarget.__data + e.key)
+        ) {
+            if (
+                e.currentTarget.__data == undefined ||
+                e.currentTarget.__data == ""
+            ) {
+                errorOn = /[a-zA-Z!,!"·$%&/()=?¿|@#~€ ]/.test(e.key);
+            } else {
+                (<HTMLInputElement>document.getElementById("submit")).disabled =
+                    true;
+
+                errorOn = true;
+            }
+        } else {
+            (<HTMLInputElement>document.getElementById("submit")).disabled =
+                false;
+
+            errorOn = false;
+        }
+    }
 </script>
 
 <h1 class="text-center text-4xl text-gray-700 font-semibold py-4">
@@ -279,15 +321,6 @@
                     </mb-select>
                 {/if}
             </div>
-
-            <!--  
-        <mb-input
-            required
-            id="system"
-            path="code.coding[0].system"
-            label="System"
-        />
-        <mb-input required id="code" path="code.coding[0].code" label="Code" />-->
         </div>
         <mb-input hidden path="status" id="statusAux" />
         <mb-input
@@ -304,15 +337,33 @@
             label="Description and Comments "
         />
         <div class="grid gap-x-24 gap-y-6 grid-cols-2">
-            <mb-input
-                id="vq"
-                path="valueQuantity.value"
-                label="Value Quantity"
-            />
+            <div>
+                <mb-input
+                    id="vq"
+                    path="valueQuantity.value"
+                    label="Value Quantity"
+                    on:keypress={checkValid}
+                />
+                <p class="text-sm text-gray-500 py-2">
+                    <i
+                        ><u
+                            >Check value quantity field:</u
+                            > Only numbers, '-' or
+                            '.'.</i
+                    >
+                </p>
+            </div>
             <mb-input id="units" path="valueQuantity.unit" label="Units" />
         </div>
         <mb-input hidden id="name" path="subject.display" label="Name" />
         <mb-input hidden path="subject.reference" label="Subject" />
+        {#if errorOn}
+            <p
+                class="text-xl font-semibold bg-red-200 shadow-lg border-4 border-red-700 text-left p-6 text-red-600"
+            >
+                <u>Check quantity field:</u> <br /><br /> Only numbers, '-' or '.'.
+            </p>
+        {/if}
         {#if issuedOn}
             <p class="text-base py-2">
                 Created:
@@ -321,13 +372,12 @@
         {/if}
         {#if lastModOn}
             <p class="text-base py-2">
-                Last modified (GMT):
+                Last modified:
                 <br />{modified}
             </p>
         {/if}
         <div />
         <div>
-            <br />
             <mb-submit>
                 <button
                     id="submit"
