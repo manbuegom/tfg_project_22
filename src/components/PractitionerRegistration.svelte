@@ -29,25 +29,35 @@
                     "Undefined Role" &&
                 e.detail.qualification[0].identifier[0].value.value != undefined
             ) {
-                e.detail.qualification = [
+                (e.detail.identifier = [
                     {
-                        identifier: [
-                            {
-                                value: `${e.detail.qualification[0].identifier[0].value.value}`,
-                            },
-                        ],
+                        value: `${e.detail.qualification[0].identifier[0].value.value}`,
                     },
-                ];
+                ]),
+                    (e.detail.qualification = [
+                        {
+                            identifier: [
+                                {
+                                    value: `${e.detail.qualification[0].identifier[0].value.value}`,
+                                },
+                            ],
+                        },
+                    ]);
             } else {
-                e.detail.qualification = [
+                (e.detail.identifier = [
                     {
-                        identifier: [
-                            {
-                                value: `${roleName}`,
-                            },
-                        ],
+                        value: `${roleName}`,
                     },
-                ];
+                ]),
+                    (e.detail.qualification = [
+                        {
+                            identifier: [
+                                {
+                                    value: `${roleName}`,
+                                },
+                            ],
+                        },
+                    ]);
             }
 
             await fhir.put(`/Practitioner/${id}`, { ...e.detail, id });
@@ -64,25 +74,35 @@
                 )).value;
             }
             if (e.detail.qualification != undefined) {
-                e.detail.qualification = [
+                (e.detail.identifier = [
                     {
-                        identifier: [
-                            {
-                                value: `${e.detail.qualification[0].identifier[0].value.value}`,
-                            },
-                        ],
+                        value: `${e.detail.qualification[0].identifier[0].value.value}`,
                     },
-                ];
+                ]),
+                    (e.detail.qualification = [
+                        {
+                            identifier: [
+                                {
+                                    value: `${e.detail.qualification[0].identifier[0].value.value}`,
+                                },
+                            ],
+                        },
+                    ]);
             } else {
-                e.detail.qualification = [
+                (e.detail.identifier = [
                     {
-                        identifier: [
-                            {
-                                value: `${roleName}`,
-                            },
-                        ],
+                        value: `${roleName}`,
                     },
-                ];
+                ]),
+                    (e.detail.qualification = [
+                        {
+                            identifier: [
+                                {
+                                    value: `${roleName}`,
+                                },
+                            ],
+                        },
+                    ]);
             }
 
             await fhir.post("/Practitioner", e.detail);
@@ -188,6 +208,7 @@
             />
             <div>
                 <mb-input hidden path="gender" id="genderAux" />
+                <mb-input hidden path="identifier.value" id="identifier" />
                 <mb-input
                     hidden
                     path="qualification[0].identifier[0].value"
