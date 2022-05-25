@@ -44,8 +44,13 @@
     async function handleDelete(e: any) {
         loading = true;
         if (id) {
-            await fhir.delete(`/Patient/${id}`, { ...e.detail, id });
-            navigate("deleted", { replace: true });
+            try {
+                await fhir.delete(`/Patient/${id}`, { ...e.detail, id });
+                navigate("deleted", { replace: true });
+            } catch (e) {
+                window.alert("The patient has observation(s) registered!. Delete them before doing this again.")
+            }
+            
         }
         loading = false;
     }
@@ -138,7 +143,7 @@
     }
 </script>
 
-<h1 class="text-center text-4xl text-gray-700 font-semibold py-4">
+<h1 class="text-center text-4xl text-gray-700 font-semibold mb-16">
     Patient Registration
 </h1>
 <div>

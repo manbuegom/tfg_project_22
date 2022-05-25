@@ -15,7 +15,7 @@
     let searchFilter = "";
 
     export let id;
-
+ 
     onMount(async () => {
         const r = await fhir.get(`/Observation?subject=Patient/${id}`);
         data = await r.data?.entry;
@@ -97,7 +97,7 @@
 <div class="grid grid-cols-2 gap-x-96">
     <div>
         <p class="text-lg text-gray-700 font-semibold py-2">
-            Search observation by 'Family name, First Name'
+            Search observation by status
         </p>
         <br />
         <mb-select id="searchO" placeholder="Alphabetically sorted">
@@ -188,7 +188,7 @@
             </div>
         {/each}
     {:else}
-        <p>No registered observations for the current patient.</p>
+        <p>No observation registered or no observation registered matching the search</p>
     {/if}
     <br />
 </div>
@@ -205,11 +205,6 @@
     <Link to={`patientForm/${id}`}>
         <button class="rounded-xl px-4 py-2 bg-lime-700 text-white"
             >Patient's details</button
-        >
-    </Link>
-    <Link to="patients">
-        <button class="rounded-xl px-4 py-2 bg-lime-700 text-white"
-            >Patient's list</button
         >
     </Link>
 </div>

@@ -5,6 +5,20 @@
     import { fhir } from "./fhir";
     import { navigate, Link } from "svelte-routing";
 
+    let deleteOn;
+    onMount(async () => {
+        if (id) {
+            const r = await fhir.get(`/PractitionerRole/${id}`);
+            const resource = r.data;
+            form.import(resource);
+            deleteOn = true;
+        } else {
+            const p = await fhir.get("/PractitionerRole");
+            dataPR = await p.data?.entry;
+            tamPR = p.data.total;
+        }
+    });
+
     let loading: boolean = false;
     export let id;
     let form;
@@ -30,19 +44,7 @@
         loading = false;
     }
 
-    let deleteOn;
-    onMount(async () => {
-        if (id) {
-            const r = await fhir.get(`/PractitionerRole/${id}`);
-            const resource = r.data;
-            form.import(resource);
-            deleteOn = true;
-        } else {
-            const p = await fhir.get("/PractitionerRole");
-            dataPR = await p.data?.entry;
-            tamPR = p.data.total;
-        }
-    });
+    
 
     let errorOn = false;
     async function checkValid(e: any) {
@@ -62,7 +64,7 @@
     }
 </script>
 
-<h1 class="text-center text-4xl text-gray-700 font-semibold py-4">
+<h1 class="text-center text-4xl text-gray-700 font-semibold mb-16">
     Practitioner Role Registration
 </h1>
 {#if id}

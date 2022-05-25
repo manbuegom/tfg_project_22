@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { fhir } from "./fhir";
-    import { Link, navigate } from "svelte-routing";
+    import { Link } from "svelte-routing";
 
     let data = [];
     let dataF = [];
@@ -9,7 +9,13 @@
     let nothingSelected;
 
     let searchFilter = "";
-    
+
+    // timedRefresh(1000);
+
+    // function timedRefresh(timeoutPeriod) {
+    //     setInterval("location.reload(true);", timeoutPeriod);
+    // }
+
     onMount(async () => {
         const rF = await fhir.get(`/Patient?_sort=family`);
         dataF = await rF.data?.entry;
@@ -18,8 +24,6 @@
         const rFsearch = await fhir.get(`/Patient?_sort=family`);
         data = await rF.data?.entry;
         tam = rF.data.total;
-        
-        
     });
 
     async function searchPatient(e: any) {
@@ -122,47 +126,57 @@
                             ><i class="fa-solid fa-id-card" /> Patient Details
                         </Link> <br /><br />
                         <Link
+                            to={`medicDetailsForm/${patient.resource.id}`}
+                            class="text-lime-700 p-4 font-semibold"
+                            ><i class="fa-solid fa-briefcase-medical" /> Relevant Details
+                        </Link> <br /><br />
+                        <Link
                             to={`observationList/${patient.resource.id}`}
                             class="text-lime-700 p-4 font-bold"
-                            ><i class="fa-solid fa-file-medical" /> Observations
+                            ><i class="fa-solid fa-stethoscope" /> Observations
                         </Link>
                     </div>
                     {patient.resource.name[0].given}
-                    {patient.resource.name[0].family}<br />
+                    {patient.resource.name[0].family}<br /><br />
                     ({patient.resource.birthDate})
-                    <br />
+                    <br /><br />
                     {genderFormat(patient.resource.gender)}
                     <div>
-                        <p>Deceased date:</p>
+                        <p>Deceased date:</p><br />
                         {patient.resource.deceasedDateTime}
-                        <br />
+                        <br /><br />
                         At age: {age(patient.resource)}
                     </div>
                 {:else}
                     <div>
                         <Link
                             to={`patientForm/${patient.resource.id}`}
-                            class="text-lime-700 p-4 font-bold"
+                            class="text-lime-700 p-4 font-semibold "
                             ><i class="fa-solid fa-id-card" /> Patient Details
                         </Link> <br /><br />
                         <Link
+                            to={`medicDetailsForm/${patient.resource.id}`}
+                            class="text-lime-700 p-4 font-semibold"
+                            ><i class="fa-solid fa-briefcase-medical" /> Relevant Details
+                        </Link> <br /><br />
+                        <Link
                             to={`observationList/${patient.resource.id}`}
-                            class="text-lime-700 p-4 font-bold"
-                            ><i class="fa-solid fa-file-medical" /> Observations
+                            class="text-lime-700 p-4 font-semibold"
+                            ><i class="fa-solid fa-stethoscope" /> Observations
                         </Link>
                     </div>
                     {patient.resource.name[0].given}
-                    {patient.resource.name[0].family}<br />
+                    {patient.resource.name[0].family}<br /><br />
                     {age(patient.resource)} ({patient.resource.birthDate})
-                    <br />{genderFormat(patient.resource.gender)}
+                    <br /><br />{genderFormat(patient.resource.gender)}
                     <div>
                         {patient.resource.address[0].city}
-                        <br />
+                        <br /><br />
                         {patient.resource.telecom[0].value}
                         {#if patient.resource.telecom[1] == undefined}
-                            <br /> Email no registered for this patient.
+                            <br /><br /> Email no registered for this patient.
                         {:else}
-                            <br />{patient.resource.telecom[1].value}ㅤ
+                            <br /><br />{patient.resource.telecom[1].value}ㅤ
                         {/if}
                     </div>
                 {/if}

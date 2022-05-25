@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Router, Link, Route } from "svelte-routing";
+  import Home from "./components/Home.svelte";
   import PatientRegistration from "./components/PatientRegistration.svelte";
   import Layout from "./Layout.svelte";
   import ListPatients from "./components/ListPatients.svelte";
@@ -30,7 +31,7 @@
     <div class="max-w-6xl mx-auto">
       <div class="flex space-x-5">
         <a
-          href="/"
+          href="/home"
           class="flex text-gray-700 text-lg font-semibold hover:text-green-800 transition duration-300 items-center py-4 px-2"
         >
           <img
@@ -69,6 +70,7 @@
     </div>
   </nav>
   <Layout>
+    <Route path="" component={Home} />
     <Route path="/patients" component={ListPatients} />
     <Route path="patientForm" component={PatientRegistration} />
     <Route path="patientForm/:id" component={PatientRegistration} />
