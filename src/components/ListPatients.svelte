@@ -126,7 +126,7 @@
                             ><i class="fa-solid fa-id-card" /> Patient Details
                         </Link> <br /><br />
                         <Link
-                            to={`medicDetailsForm/${patient.resource.id}`}
+                            to={`relevantDetails/${patient.resource.id}`}
                             class="text-lime-700 p-4 font-semibold"
                             ><i class="fa-solid fa-briefcase-medical" /> Relevant Details
                         </Link> <br /><br />
@@ -155,7 +155,7 @@
                             ><i class="fa-solid fa-id-card" /> Patient Details
                         </Link> <br /><br />
                         <Link
-                            to={`medicDetailsForm/${patient.resource.id}`}
+                            to={`relevantDetails/${patient.resource.id}`}
                             class="text-lime-700 p-4 font-semibold"
                             ><i class="fa-solid fa-briefcase-medical" /> Relevant Details
                         </Link> <br /><br />
