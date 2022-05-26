@@ -77,7 +77,7 @@
     </div>
   </nav>
   <Layout>
-    <Route path="/home" component={Home} />
+    <Route path="" component={Home} />
     <Route path="/patients" component={ListPatients} />
     <Route path="patientForm" component={PatientRegistration} />
     <Route path="patientForm/:id" component={PatientRegistration} />

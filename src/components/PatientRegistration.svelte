@@ -48,7 +48,7 @@
                 await fhir.delete(`/Patient/${id}`, { ...e.detail, id });
                 navigate("deleted", { replace: true });
             } catch (e) {
-                window.alert("The patient has observation(s) registered!. Delete them before doing this again.")
+                window.alert("The patient has observation(s), condition(s) or immunization(s) registered!. Delete them before doing this again.")
             }
             
         }
@@ -176,6 +176,9 @@
                     label="Death Date"
                     path="deceasedDateTime"
                 />
+                <p class="text-sm text-gray-500 mt-4 ">
+                    <i><u>Important!</u> After filling and submiting this field, the form will no longer be editable.</i>
+                </p>
             </div>
             <div>
                 <p class="text-base py-2">Gender:</p>
@@ -258,7 +261,7 @@
             <p
                 class="text-xl font-semibold bg-red-200 shadow-lg border-4 border-red-700 text-left p-6 text-red-600"
             >
-                <u>Check email field:</u> <br /><br /> Either @ or '.' missing.
+                <u>Check email field:</u> <br /><br /> Either '@' or '.' missing.
             </p>
         {/if}
         <div>

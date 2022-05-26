@@ -10,12 +10,6 @@
 
     let searchFilter = "";
 
-    // timedRefresh(1000);
-
-    // function timedRefresh(timeoutPeriod) {
-    //     setInterval("location.reload(true);", timeoutPeriod);
-    // }
-
     onMount(async () => {
         const rF = await fhir.get(`/Patient?_sort=family`);
         dataF = await rF.data?.entry;
@@ -122,7 +116,7 @@
                     <div>
                         <Link
                             to={`patientForm/${patient.resource.id}`}
-                            class="text-lime-700 p-4 font-bold"
+                            class="text-lime-700 p-4 font-semibold"
                             ><i class="fa-solid fa-id-card" /> Patient Details
                         </Link> <br /><br />
                         <Link
@@ -132,7 +126,7 @@
                         </Link> <br /><br />
                         <Link
                             to={`observationList/${patient.resource.id}`}
-                            class="text-lime-700 p-4 font-bold"
+                            class="text-lime-700 p-4 font-semibold"
                             ><i class="fa-solid fa-stethoscope" /> Observations
                         </Link>
                     </div>

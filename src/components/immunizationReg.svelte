@@ -67,10 +67,9 @@
         />
 
         <mb-input
-            required
             id="display"
             path="vaccineCode.text"
-            label="Comments:"
+            label="Comments"
         />
 
         <div>

@@ -44,8 +44,6 @@
     async function handleDelete(e: any) {
         loading = true;
 
-        debugger
-
         if (e.currentTarget.id.split("/")[1] == "con") {
             let idC = e.currentTarget.id.split("/")[0];
             await fhir.delete(
@@ -62,7 +60,7 @@
                 `/Immunization/${e.currentTarget.id.split("/")[0]}`,
                 { ...e.detail, idI }
             );
-            navigate(`delete?${patientRef.split("/")[1]}`, {
+            navigate(`deletedIm?${patientRef.split("/")[1]}`, {
                 replace: true,
             });
             loading = false;
@@ -91,11 +89,11 @@
         <h3 class="text-center text-2xl  text-gray-700 font-semibold mb-16">
             Conditions
         </h3>
-        <div class="text-center text-xl flex flex-col gap-4 mr-20">
+        <div class="text-center text-xl flex flex-col gap-4">
             {#if tam != 0}
                 {#each data as condition}
                     <div
-                        class=" bg-lime-200 shadow-lg text-xl text-left p-6 mr-20"
+                        class=" bg-lime-200 shadow-lg text-xl text-left p-6 mr-4"
                     >
                         <button
                             on:click={handleDelete}
@@ -116,7 +114,7 @@
                 <Link to={`conditionForm?${patientRef}`}>
                     <button
                         id="submit"
-                        class="rounded-xl px-4 py-2 mr-20 bg-lime-700 text-white"
+                        class="rounded-xl px-4 py-2 mr-8 bg-lime-700 text-white"
                         >New Condition</button
                     >
                 </Link>
@@ -124,16 +122,14 @@
         </div>
     </div>
     <div class="border-l-4 border-gray-700">
-        <h3
-            class="text-center text-2xl  text-gray-700 font-semibold mb-16 ml-20"
-        >
+        <h3 class="text-center text-2xl  text-gray-700 font-semibold mb-16">
             Immunizations
         </h3>
-        <div class="text-center text-xl flex flex-col gap-4 ml-20">
+        <div class="text-center text-xl flex flex-col gap-4 ml-4">
             {#if tamI != 0}
                 {#each dataI as im}
                     <div
-                        class=" bg-lime-200 shadow-lg text-xl text-left p-6 mr-20"
+                        class=" bg-lime-200 shadow-lg text-xl text-left p-6 ml-4"
                     >
                         <button
                             on:click={handleDelete}
@@ -154,7 +150,7 @@
                 <Link to={`immunizationForm?${patientRef}`}>
                     <button
                         id="submit"
-                        class="rounded-xl px-4 py-2 ml-20 bg-lime-700 text-white"
+                        class="rounded-xl px-4 py-2 ml-8 bg-lime-700 text-white"
                         >New Immunization</button
                     >
                 </Link>
