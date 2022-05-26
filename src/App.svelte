@@ -5,6 +5,13 @@
   import Layout from "./Layout.svelte";
   import ListPatients from "./components/ListPatients.svelte";
   import ListObservations from "./components/ListObservations.svelte";
+  import RelevantDetails from "./components/RelevantDetails.svelte";
+  import ConditionReg from "./components/ConditionReg.svelte";
+  import AddSuccessCond from "./components/addSuccessCond.svelte";
+  import DeleteSuccessCond from "./components/deleteSuccessCond.svelte";
+  import ImmunizationReg from "./components/ImmunizationReg.svelte";
+  import AddSuccessImm from "./components/addSuccessImm.svelte";
+  import DeleteSuccessImm from "./components/deleteSuccessImm.svelte";
   import AddSuccess from "./components/addSuccess.svelte";
   import EditSuccess from "./components/editSuccess.svelte";
   import DeleteSuccess from "./components/deleteSuccess.svelte";
@@ -70,7 +77,7 @@
     </div>
   </nav>
   <Layout>
-    <Route path="" component={Home} />
+    <Route path="/home" component={Home} />
     <Route path="/patients" component={ListPatients} />
     <Route path="patientForm" component={PatientRegistration} />
     <Route path="patientForm/:id" component={PatientRegistration} />
@@ -80,6 +87,15 @@
     <Route path="observationForm" component={ObservationRegistration} />
     <Route path="observationForm/:id" component={ObservationRegistration} />
     <Route path="observationList/:id" component={ListObservations} />
+    <Route path="relevantDetails/:id" component={RelevantDetails} />
+    <Route path="conditionForm" component={ConditionReg} />
+    <Route path="conditionForm:/:id" component={ConditionReg} />
+    <Route path="conditionForm/added" component={AddSuccessCond} />
+    <Route path="relevantDetails/delete" component={DeleteSuccessCond} />
+    <Route path="immunizationForm" component={ImmunizationReg} />
+    <Route path="immunizationForm:/:id" component={ImmunizationReg} />
+    <Route path="immunizationForm/added" component={AddSuccessImm} />
+    <Route path="relevantDetails/deletedIm" component={DeleteSuccessImm} />
     <Route path="observationForm/added" component={AddSuccessO} />
     <Route path="observationForm/updated" component={EditSuccessO} />
     <Route path="observationForm/deleted" component={DeleteSuccessO} />
