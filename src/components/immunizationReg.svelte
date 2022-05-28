@@ -55,7 +55,7 @@
     <mb-fhir-form
         id="form"
         bind:this={form}
-        class="flex flex-col gap-4 py-12 text-gray-700 text-lg font-semibold focus-within:text-lime-700"
+        class="flex flex-col gap-4 py-12 text-gray-700 text-lg font-semibold focus-within:text-blue-700"
         on:mb-submit={handleSubmit}
     >
         <mb-context path="resourceType" data="Immunization" />
@@ -77,13 +77,13 @@
             <mb-submit>
                 <button
                     id="submit"
-                    class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                    class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                     >Submit</button
                 >
             </mb-submit>
 
             <Link to="relevantDetails">
-                <button class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                <button class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                     >Back</button
                 >
             </Link>

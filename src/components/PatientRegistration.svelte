@@ -150,7 +150,7 @@
     <mb-fhir-form
         id="form"
         bind:this={form}
-        class="flex flex-col gap-4 py-12 text-gray-700 text-lg font-semibold focus-within:text-lime-700"
+        class="flex flex-col gap-4 py-12 text-gray-700 text-lg font-semibold focus-within:text-blue-700"
         on:mb-submit={handleSubmit}
     >
         <mb-context path="resourceType" data="Patient" />
@@ -183,17 +183,17 @@
             <div>
                 <p class="text-base py-2">Gender:</p>
                 <button
-                    class="text-white font-semibold bg-lime-700 focus:ring-4 focus:ring-gray-700 rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2"
+                    class="text-white font-semibold bg-blue-700 focus:ring-4 focus:ring-gray-700 rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2"
                     id="male"
                     on:click={handleGender}>Male</button
                 >
                 <button
-                    class="text-white font-semibold bg-lime-700 focus:ring-4 focus:ring-gray-700 rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2"
+                    class="text-white font-semibold bg-blue-700 focus:ring-4 focus:ring-gray-700 rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2"
                     id="female"
                     on:click={handleGender}>Female</button
                 >
                 <button
-                    class="text-white font-semibold bg-lime-700 focus:ring-4 focus:ring-gray-700 rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2"
+                    class="text-white font-semibold bg-blue-700 focus:ring-4 focus:ring-gray-700 rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2"
                     id="other"
                     on:click={handleGender}>Other</button
                 >
@@ -269,12 +269,12 @@
             <mb-submit>
                 <button
                     id="submit"
-                    class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                    class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                     >Submit</button
                 >
             </mb-submit>
             <Link to="patients">
-                <button class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                <button class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                     >Patient's list</button
                 >
             </Link>
@@ -282,7 +282,7 @@
                 {#if !deceasedCheck}
                     <Link to="observationForm?Patient/{id}">
                         <button
-                            class="rounded-xl px-4 py-2 bg-orange-500 text-white"
+                            class="rounded-xl px-4 py-2 bg-blue-500 text-white"
                             >Add Observation
                         </button>
                     </Link>
@@ -290,7 +290,7 @@
             {/if}
             {#if deleteOn}
                 <button
-                    class="rounded-xl px-4 py-2 bg-orange-900 text-white"
+                    class="rounded-xl px-4 py-2 bg-red-700 text-white"
                     on:click={handleDelete}
                     >Delete Patient Data
                 </button>

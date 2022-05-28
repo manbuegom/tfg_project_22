@@ -92,12 +92,12 @@
                 {/each}
                 <br />
                 <button
-                    class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                    class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                     on:click={searchPract}>Search</button
                 >
 
                 <button
-                    class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                    class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                     on:click={searchClear}>Clear</button
                 >
             {:else}
@@ -131,12 +131,12 @@
                 />
                 <br />
                 <button
-                    class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                    class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                     on:click={searchPractRole}>Search</button
                 >
 
                 <button
-                    class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                    class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                     on:click={searchClearRole}>Clear</button
                 >
             {:else}
@@ -158,13 +158,13 @@
     {#if tam != 0}
         {#each data as practitioner}
             <div
-                class="grid grid-cols-3 bg-lime-200 shadow-lg text-xl text-left p-6"
+                class="grid grid-cols-3 bg-blue-200 shadow-lg text-xl text-left p-6"
             >
                 <div>
                     <br />
                     <Link
                         to={`practitionerForm/${practitioner.resource.id}`}
-                        class="text-lime-700 p-4 font-bold"
+                        class="text-blue-700 p-4 font-bold"
                         ><i class="fa-solid fa-id-card" /> Practitioner Details
                     </Link>
                 </div>

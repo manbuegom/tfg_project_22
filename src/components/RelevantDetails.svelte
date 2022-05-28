@@ -77,7 +77,7 @@
         Patient name:
         <Link
             to={`patientForm/${queryStringPatientId}`}
-            class="text-lime-700 p-4 font-bold"
+            class="text-blue-700 p-4 font-bold"
             >{nameString}
         </Link>
     </p>
@@ -93,11 +93,11 @@
             {#if tam != 0}
                 {#each data as condition}
                     <div
-                        class=" bg-lime-200 shadow-lg text-xl text-left p-6 mr-4"
+                        class=" bg-blue-200 shadow-lg text-xl text-left p-6 mr-4"
                     >
                         <button
                             on:click={handleDelete}
-                            class="text-lime-700 p-4 font-bold"
+                            class="text-blue-700 p-4 font-bold"
                             id={condition.resource.id + "/con"}
                             ><i class="fa-solid fa-trash-can" />
                         </button>
@@ -114,7 +114,7 @@
                 <Link to={`conditionForm?${patientRef}`}>
                     <button
                         id="submit"
-                        class="rounded-xl px-4 py-2 mr-8 bg-lime-700 text-white"
+                        class="rounded-xl px-4 py-2 mr-8 bg-blue-700 text-white"
                         >New Condition</button
                     >
                 </Link>
@@ -129,11 +129,11 @@
             {#if tamI != 0}
                 {#each dataI as im}
                     <div
-                        class=" bg-lime-200 shadow-lg text-xl text-left p-6 ml-4"
+                        class=" bg-blue-200 shadow-lg text-xl text-left p-6 ml-4"
                     >
                         <button
                             on:click={handleDelete}
-                            class="text-lime-700 p-4 font-bold"
+                            class="text-blue-700 p-4 font-bold"
                             id={im.resource.id + "/im"}
                             ><i class="fa-solid fa-trash-can" />
                         </button>
@@ -150,7 +150,7 @@
                 <Link to={`immunizationForm?${patientRef}`}>
                     <button
                         id="submit"
-                        class="rounded-xl px-4 py-2 ml-8 bg-lime-700 text-white"
+                        class="rounded-xl px-4 py-2 ml-8 bg-blue-700 text-white"
                         >New Immunization</button
                     >
                 </Link>

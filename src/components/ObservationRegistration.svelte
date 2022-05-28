@@ -241,7 +241,7 @@
     <mb-fhir-form
         id="form"
         bind:this={form}
-        class="flex flex-col gap-4 py-12 text-gray-700 text-lg font-semibold focus-within:text-lime-700"
+        class="flex flex-col gap-4 py-12 text-gray-700 text-lg font-semibold focus-within:text-blue-700"
         on:mb-submit={handleSubmit}
     >
         <mb-context path="resourceType" data="Observation" />
@@ -251,13 +251,13 @@
                 {#if deleteOn}
                     <Link
                         to={`patientForm/${referenceIdPatient}`}
-                        class="text-lime-700 p-4 font-bold"
+                        class="text-blue-700 p-4 font-bold"
                         >{nameString}
                     </Link>
                 {:else}
                     <Link
                         to={`patientForm/${queryStringPatientId}`}
-                        class="text-lime-700 p-4 font-bold"
+                        class="text-blue-700 p-4 font-bold"
                         >{nameString}
                     </Link>
                 {/if}
@@ -268,7 +268,7 @@
                     Performer name:
                     <Link
                         to={`practitionerForm/${practitionerId}`}
-                        class="text-lime-700 p-4 font-bold"
+                        class="text-blue-700 p-4 font-bold"
                         >{nameStringP}
                     </Link>
                 {/if}
@@ -278,17 +278,17 @@
             <div>
                 <p class="text-base py-2">Status:</p>
                 <button
-                    class="text-white font-semibold bg-lime-700 focus:ring-4 focus:ring-gray-700 rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2"
+                    class="text-white font-semibold bg-blue-700 focus:ring-4 focus:ring-gray-700 rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2"
                     id="preliminary"
                     on:click={handleStatus}>Preliminary</button
                 >
                 <button
-                    class="text-white font-semibold bg-lime-700 focus:ring-4 focus:ring-gray-700 rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2"
+                    class="text-white font-semibold bg-blue-700 focus:ring-4 focus:ring-gray-700 rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2"
                     id="final"
                     on:click={handleStatus}>Final</button
                 >
                 <button
-                    class="text-white font-semibold bg-lime-700 focus:ring-4 focus:ring-gray-700 rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2"
+                    class="text-white font-semibold bg-blue-700 focus:ring-4 focus:ring-gray-700 rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2"
                     id="amended"
                     on:click={handleStatus}>Amended</button
                 >
@@ -381,25 +381,25 @@
             <mb-submit>
                 <button
                     id="submit"
-                    class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                    class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                     >Submit</button
                 >
             </mb-submit>
             {#if !deleteOn}
                 <Link to={`observationList/${queryStringPatientId}`}>
-                    <button class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                    <button class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                         >Back to list</button
                     >
                 </Link>
             {/if}
             {#if deleteOn}
                 <Link to={`observationList/${referenceIdPatient}`}>
-                    <button class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                    <button class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                         >Back to list</button
                     >
                 </Link>
                 <button
-                    class="rounded-xl px-4 py-2 bg-orange-700 text-white"
+                    class="rounded-xl px-4 py-2 bg-red-700 text-white"
                     on:click={handleDelete}
                     >Delete Observation
                 </button>

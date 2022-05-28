@@ -69,7 +69,7 @@
 </h1>
 {#if id}
     <br /><br /><br />
-    <p class="text-2xl font-semibold bg-lime-200 shadow-lg text-left p-6">
+    <p class="text-2xl font-semibold bg-blue-200 shadow-lg text-left p-6">
         <u>Important Information:</u> <br /><br /> Once you update or delete a role,
         you must update practitioners who have that role assigned.
     </p>
@@ -79,7 +79,7 @@
     <mb-fhir-form
         id="form"
         bind:this={form}
-        class="flex flex-col gap-4 py-12 text-gray-700 text-lg font-semibold focus-within:text-lime-700"
+        class="flex flex-col gap-4 py-12 text-gray-700 text-lg font-semibold focus-within:text-blue-700"
         on:mb-submit={handleSubmit}
     >
         <mb-context path="resourceType" data="PractitionerRole" />
@@ -103,18 +103,18 @@
             <mb-submit>
                 <button
                     id="submit"
-                    class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                    class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                     >Submit</button
                 >
             </mb-submit>
             {#if deleteOn}
                 <Link to=practRoleForm>
-                    <button class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                    <button class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                         >Back to list</button
                     >
                 </Link>
                 <button
-                    class="rounded-xl px-4 py-2 bg-orange-900 text-white"
+                    class="rounded-xl px-4 py-2 bg-red-700 text-white"
                     on:click={handleDelete}
                     >Delete Practitioner Role
                 </button>
@@ -129,11 +129,11 @@
                 {#if tamPR != 0}
                     {#each dataPR as practRole}
                         <div
-                            class="bg-lime-200 shadow-lg text-xl text-left p-12"
+                            class="bg-blue-200 shadow-lg text-xl text-left p-12"
                         >
                             <Link
                                 to={`practRoleForm/${practRole.resource.id}`}
-                                class="text-lime-700 p-4 font-bold"
+                                class="text-blue-700 p-4 font-bold"
                                 ><i class="fa-solid fa-id-card" />
                             </Link>
 

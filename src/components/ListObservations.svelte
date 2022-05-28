@@ -107,12 +107,12 @@
 
             <br />
             <button
-                class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                 on:click={searchPatient}>Search</button
             >
 
             <button
-                class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                 on:click={searchClear}>Clear</button
             >
         </mb-select>
@@ -138,12 +138,12 @@
                 {/each}
                 <br />
                 <button
-                    class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                    class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                     on:click={searchPerformer}>Search</button
                 >
 
                 <button
-                    class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                    class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                     on:click={searchClearPerf}>Clear</button
                 >
             {:else}
@@ -164,13 +164,13 @@
     {#if tam != 0}
         {#each data as observation}
             <div
-                class="grid grid-cols-3 bg-lime-200 shadow-lg text-xl text-left py-6"
+                class="grid grid-cols-3 bg-blue-200 shadow-lg text-xl text-left py-6"
             >
                 <div>
                     <br />
                     <Link
                         to={`observationForm/${observation.resource.id}`}
-                        class="text-lime-700 font-bold p-4"
+                        class="text-blue-700 font-bold p-4"
                         ><i class="fa-solid fa-id-card" /> Observation Details
                     </Link>
                 </div>
@@ -197,13 +197,13 @@
         <Link to={`observationForm?${patientRef}`}>
             <button
                 id="submit"
-                class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                 >New Observation</button
             >
         </Link>
     {/if}
     <Link to={`patientForm/${id}`}>
-        <button class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+        <button class="rounded-xl px-4 py-2 bg-blue-700 text-white"
             >Patient's details</button
         >
     </Link>
