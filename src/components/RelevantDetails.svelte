@@ -14,30 +14,34 @@
     export let id;
 
     onMount(async () => {
-        const c = await fhir.get(`/Condition?subject=Patient/${id}`);
-        data = await c.data?.entry;
-        tam = c.data.total;
+        try {
+            const c = await fhir.get(`/Condition?subject=Patient/${id}`);
+            data = await c.data?.entry;
+            tam = c.data.total;
 
-        const i = await fhir.get(`/Immunization?patient=Patient/${id}`);
-        dataI = await i.data?.entry;
-        tamI = i.data.total;
+            const i = await fhir.get(`/Immunization?patient=Patient/${id}`);
+            dataI = await i.data?.entry;
+            tamI = i.data.total;
 
-        const p = await fhir.get(`/Patient/${id}`);
-        const dataP = p.data;
-        nameString =
-            "" + dataP.name[0].given + "" + " " + dataP.name[0].family + "";
+            const p = await fhir.get(`/Patient/${id}`);
+            const dataP = p.data;
+            nameString =
+                "" + dataP.name[0].given + "" + " " + dataP.name[0].family + "";
 
-        if (dataP.deceasedDateTime != undefined) {
-            deceased = true;
-        }
+            if (dataP.deceasedDateTime != undefined) {
+                deceased = true;
+            }
 
-        if (tam != 0) {
-            patientRef = data[0].resource.subject.reference;
-        } else {
-            let queryString = window.location.href
-                .split("relevantDetails")[1]
-                .split("/")[1];
-            patientRef = `Patient/${queryString}`;
+            if (tam != 0) {
+                patientRef = data[0].resource.subject.reference;
+            } else {
+                let queryString = window.location.href
+                    .split("relevantDetails")[1]
+                    .split("/")[1];
+                patientRef = `Patient/${queryString}`;
+            }
+        } catch (error) {
+            navigate("/notFound", { replace: true });
         }
     });
 

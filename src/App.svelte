@@ -29,6 +29,7 @@
   import AddSuccessPractRole from "./components/addSuccessPractRole.svelte";
   import EditSuccessPractRole from "./components/editSuccessPractRole.svelte";
   import DeleteSuccessPractRole from "./components/deleteSuccessPractRole.svelte";
+  import NotFound from "./components/notFound.svelte";
 </script>
 
 <TailwindCss />
@@ -84,6 +85,7 @@
     <Route path="patientForm/added" component={AddSuccess} />
     <Route path="patientForm/updated" component={EditSuccess} />
     <Route path="patientForm/deleted" component={DeleteSuccess} />
+    <Route path="notFound" component={NotFound} />
     <Route path="observationForm" component={ObservationRegistration} />
     <Route path="observationForm/:id" component={ObservationRegistration} />
     <Route path="observationList/:id" component={ListObservations} />

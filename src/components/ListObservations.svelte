@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { fhir } from "./fhir";
-    import { Link } from "svelte-routing";
+    import { Link, navigate } from "svelte-routing";
 
     let data = [];
     let dataP = [];
@@ -15,29 +15,33 @@
     let searchFilter = "";
 
     export let id;
- 
+
     onMount(async () => {
-        const r = await fhir.get(`/Observation?subject=Patient/${id}`);
-        data = await r.data?.entry;
-        tam = r.data.total;
+        try {
+            const r = await fhir.get(`/Observation?subject=Patient/${id}`);
+            data = await r.data?.entry;
+            tam = r.data.total;
 
-        const a = await fhir.get(`/Patient/${id}`);
-        const dataP = a.data;
-        if (dataP.deceasedDateTime != undefined) {
-            deceased = true;
-        }
+            const a = await fhir.get(`/Patient/${id}`);
+            const dataP = a.data;
+            if (dataP.deceasedDateTime != undefined) {
+                deceased = true;
+            }
 
-        const rP = await fhir.get(`/Practitioner?_sort=family`);
-        dataPerf = await rP.data?.entry;
-        tamP = rP.data.total;
+            const rP = await fhir.get(`/Practitioner?_sort=family`);
+            dataPerf = await rP.data?.entry;
+            tamP = rP.data.total;
 
-        if (tam != 0) {
-            patientRef = data[0].resource.subject.reference;
-        } else {
-            let queryString = window.location.href
-                .split("observationList")[1]
-                .split("/")[1];
-            patientRef = `Patient/${queryString}`;
+            if (tam != 0) {
+                patientRef = data[0].resource.subject.reference;
+            } else {
+                let queryString = window.location.href
+                    .split("observationList")[1]
+                    .split("/")[1];
+                patientRef = `Patient/${queryString}`;
+            }
+        } catch (error) {
+            navigate("/notFound", { replace: true });
         }
     });
 
@@ -188,7 +192,10 @@
             </div>
         {/each}
     {:else}
-        <p>No observation registered or no observation registered matching the search</p>
+        <p>
+            No observation registered or no observation registered matching the
+            search
+        </p>
     {/if}
     <br />
 </div>

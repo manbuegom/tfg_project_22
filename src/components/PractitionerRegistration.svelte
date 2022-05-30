@@ -135,21 +135,27 @@
     let deleteOn;
     let actualGender;
     let lastGenderRegistered;
-    let hasRole, roleName;
+    let roleName;
     let dataP = [];
     let tam;
     onMount(async () => {
         if (id) {
-            const r = await fhir.get(`/Practitioner/${id}`);
-            const resource = r.data;
-            form.import(resource);
-            lastGenderRegistered = resource.gender;
-            let actualGenderFL = lastGenderRegistered.charAt(0).toUpperCase();
-            actualGender =
-                "" + actualGenderFL + lastGenderRegistered.slice(1) + "";
+            try {
+                const r = await fhir.get(`/Practitioner/${id}`);
+                const resource = r.data;
+                form.import(resource);
+                lastGenderRegistered = resource.gender;
+                let actualGenderFL = lastGenderRegistered
+                    .charAt(0)
+                    .toUpperCase();
+                actualGender =
+                    "" + actualGenderFL + lastGenderRegistered.slice(1) + "";
 
-            deleteOn = true;
-            roleName = resource.qualification[0].identifier[0].value;
+                deleteOn = true;
+                roleName = resource.qualification[0].identifier[0].value;
+            } catch (error) {
+                navigate("/notFound", { replace: true });
+            }
         } else {
             roleName = "Undefined Role";
         }
@@ -294,6 +300,17 @@
                 on:keypress={checkValid}
             />
         </div>
+        <div class="grid gap-x-8 gap-y-6 grid-cols-4">
+            <p class="text-sm text-gray-500 ">
+                <i
+                    ><u>Check Email field:</u> Symbols '@'' and '.' must be used.</i
+                >
+            </p>
+            <p class="text-sm text-gray-500 ">
+                <i><u>Check contact field:</u> Max lenght: 15</i>
+            </p>
+        </div>
+
         {#if errorOn}
             <p
                 class="text-xl font-semibold bg-red-200 shadow-lg border-4 border-red-700 text-left p-6 text-red-600"

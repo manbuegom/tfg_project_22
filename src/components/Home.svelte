@@ -35,7 +35,7 @@
         and manage them.
     </p>
     <br />
-    <div class="ml-60">
+    <div class="flex items-center justify-center">
         <img src="\src\assets\HC-SM.png" alt="Logo" class="h-28 w-28" />
     </div>
 </div>

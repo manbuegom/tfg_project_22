@@ -12,15 +12,20 @@
     let queryStringPatientId = window.location.search.split("?")[1];
 
     onMount(async () => {
-        if (id) {
-            const r = await fhir.get(`/Immunization/${id}`);
-            const resource = r.data;
-            form.import(resource);
-            deleteOn = true;
-            referenceIdPatient = resource.subject.reference.split("/")[1];
-            nameString = await getName(`${referenceIdPatient}`);
+        try {
+            if (id) {
+                const r = await fhir.get(`/Immunization/${id}`);
+                const resource = r.data;
+                form.import(resource);
+                deleteOn = true;
+                referenceIdPatient = resource.subject.reference.split("/")[1];
+                nameString = await getName(`${referenceIdPatient}`);
+            }
+
+            nameString = await getName(`${queryStringPatientId}`);
+        } catch (error) {
+            navigate("/notFound", { replace: true });
         }
-        nameString = await getName(`${queryStringPatientId}`);
     });
 
     async function handleSubmit(e: any) {
@@ -66,11 +71,7 @@
             label="Immunization Name"
         />
 
-        <mb-input
-            id="display"
-            path="vaccineCode.text"
-            label="Comments"
-        />
+        <mb-input id="display" path="vaccineCode.text" label="Comments" />
 
         <div>
             <br />

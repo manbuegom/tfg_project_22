@@ -12,15 +12,19 @@
     let queryStringPatientId = window.location.search.split("?")[1];
 
     onMount(async () => {
-        if (id) {
-            const r = await fhir.get(`/Condition/${id}`);
-            const resource = r.data;
-            form.import(resource);
-            deleteOn = true;
-            referenceIdPatient = resource.subject.reference.split("/")[1];
-            nameString = await getName(`${referenceIdPatient}`);
+        try {
+            if (id) {
+                const r = await fhir.get(`/Condition/${id}`);
+                const resource = r.data;
+                form.import(resource);
+                deleteOn = true;
+                referenceIdPatient = resource.subject.reference.split("/")[1];
+                nameString = await getName(`${referenceIdPatient}`);
+            }
+            nameString = await getName(`${queryStringPatientId}`);
+        } catch (error) {
+            navigate("/notFound", { replace: true });
         }
-        nameString = await getName(`${queryStringPatientId}`);
     });
 
     async function handleSubmit(e: any) {
@@ -29,7 +33,6 @@
             await fhir.put(`/Condition/${id}`, { ...e.detail, id });
             navigate("updated", { replace: true });
         } else {
-            
             e.detail.subject = {
                 display: `${nameString}`,
                 reference: `${queryStringPatientId}`,

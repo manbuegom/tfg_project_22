@@ -140,40 +140,46 @@
     let practitionerId, referenceIdPatient, performerDetailRef;
 
     onMount(async () => {
-        if (id) {
-            const r = await fhir.get(`/Observation/${id}`);
-            const resource = r.data;
-            form.import(resource);
-            issuedOn = true;
-            lastModOn = true;
-            deleteOn = true;
-            referenceIdPatient = resource.subject.reference.split("/")[1];
-            nameString = await getName(`/Patient/${referenceIdPatient}`);
-            practitionerId = resource.performer[0].reference.split("/")[1];
-            nameStringP = await getName(`/Practitioner/${practitionerId}`);
-            lastStatusRegistered = resource.status;
-            let actualStatusFL = lastStatusRegistered.charAt(0).toUpperCase();
-            actualStatus =
-                "" + actualStatusFL + lastStatusRegistered.slice(1) + "";
+        try {
+            if (id) {
+                const r = await fhir.get(`/Observation/${id}`);
+                const resource = r.data;
+                form.import(resource);
+                issuedOn = true;
+                lastModOn = true;
+                deleteOn = true;
+                referenceIdPatient = resource.subject.reference.split("/")[1];
+                nameString = await getName(`/Patient/${referenceIdPatient}`);
+                practitionerId = resource.performer[0].reference.split("/")[1];
+                nameStringP = await getName(`/Practitioner/${practitionerId}`);
+                lastStatusRegistered = resource.status;
+                let actualStatusFL = lastStatusRegistered
+                    .charAt(0)
+                    .toUpperCase();
+                actualStatus =
+                    "" + actualStatusFL + lastStatusRegistered.slice(1) + "";
 
-            modified = resource.code.coding[0].code
-                .split(".")[0]
-                .replace("T", " at ")
-                .replace("+01:00", ".");
-            createdNoFormat = resource.issued;
-            created = resource.issued
-                .replace("T", " at ")
-                .replace("+01:00", ".");
+                modified = resource.code.coding[0].code
+                    .split(".")[0]
+                    .replace("T", " at ")
+                    .replace("+01:00", ".");
+                createdNoFormat = resource.issued;
+                created = resource.issued
+                    .replace("T", " at ")
+                    .replace("+01:00", ".");
 
-            performerDetailRef = resource.performer[0].reference;
+                performerDetailRef = resource.performer[0].reference;
 
-            const a = await fhir.get(`/Patient/${referenceIdPatient}`);
-            const dataA = a.data;
-            if (dataA.deceasedDateTime != undefined) {
-                disableFormIfDiceased(true);
+                const a = await fhir.get(`/Patient/${referenceIdPatient}`);
+                const dataA = a.data;
+                if (dataA.deceasedDateTime != undefined) {
+                    disableFormIfDiceased(true);
+                }
+            } else {
+                nameString = await getName(`/Patient/${queryStringPatientId}`);
             }
-        } else {
-            nameString = await getName(`/Patient/${queryStringPatientId}`);
+        } catch (error) {
+            navigate("/notFound", { replace: true });
         }
     });
     async function disableFormIfDiceased(e: any) {
@@ -346,10 +352,8 @@
                 />
                 <p class="text-sm text-gray-500 py-2">
                     <i
-                        ><u
-                            >Check value quantity field:</u
-                            > Only numbers, '-' or
-                            '.'.</i
+                        ><u>Check value quantity field:</u> Only numbers, '-' or
+                        '.'.</i
                     >
                 </p>
             </div>

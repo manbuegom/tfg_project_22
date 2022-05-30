@@ -8,10 +8,14 @@
     let deleteOn;
     onMount(async () => {
         if (id) {
-            const r = await fhir.get(`/PractitionerRole/${id}`);
-            const resource = r.data;
-            form.import(resource);
-            deleteOn = true;
+            try {
+                const r = await fhir.get(`/PractitionerRole/${id}`);
+                const resource = r.data;
+                form.import(resource);
+                deleteOn = true;
+            } catch (error) {
+                navigate("/notFound", { replace: true });
+            }
         } else {
             const p = await fhir.get("/PractitionerRole");
             dataPR = await p.data?.entry;
@@ -43,8 +47,6 @@
         }
         loading = false;
     }
-
-    
 
     let errorOn = false;
     async function checkValid(e: any) {
@@ -108,7 +110,7 @@
                 >
             </mb-submit>
             {#if deleteOn}
-                <Link to=practRoleForm>
+                <Link to="practRoleForm">
                     <button class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                         >Back to list</button
                     >

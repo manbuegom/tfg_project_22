@@ -1,23 +1,25 @@
 <script lang="ts">
-    let queryString = window.location.search.split("?")[1];
-
     import { navigate } from "svelte-routing";
 
     function redireccionar() {
         setTimeout(() => {
-            navigate(`/relevantDetails/${queryString}`, { replace: true });
-        }, 2000);
+            navigate("/home", { replace: true });
+        }, 3000);
     }
 
     redireccionar();
 </script>
+<br /><br />
+<br /><br />
+<div class="flex items-center justify-center">
+    <img src="\src\assets\404.png" alt="Logo" class="h-28 w-28" />
+</div>
+<br /><br />
+<br /><br />
+<h1 class="text-center text-5xl">Resource not found! Redirecting...</h1>
+<br /><br />
+<br /><br />
 
-<br /><br />
-<br /><br />
-<h1 class="text-center text-5xl">Immunization Successfully Registered!</h1>
-
-<br /><br />
-<br /><br />
 <div class="flex items-center justify-center">
     <svg
         role="status"
