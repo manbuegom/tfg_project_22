@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { fhir } from "./fhir";
-    import { Link } from "svelte-routing";
+    import { Link, navigate } from "svelte-routing";
 
     let data = [];
     let dataP = [];
@@ -15,29 +15,33 @@
     let searchFilter = "";
 
     export let id;
- 
+
     onMount(async () => {
-        const r = await fhir.get(`/Observation?subject=Patient/${id}`);
-        data = await r.data?.entry;
-        tam = r.data.total;
+        try {
+            const r = await fhir.get(`/Observation?subject=Patient/${id}`);
+            data = await r.data?.entry;
+            tam = r.data.total;
 
-        const a = await fhir.get(`/Patient/${id}`);
-        const dataP = a.data;
-        if (dataP.deceasedDateTime != undefined) {
-            deceased = true;
-        }
+            const a = await fhir.get(`/Patient/${id}`);
+            const dataP = a.data;
+            if (dataP.deceasedDateTime != undefined) {
+                deceased = true;
+            }
 
-        const rP = await fhir.get(`/Practitioner?_sort=family`);
-        dataPerf = await rP.data?.entry;
-        tamP = rP.data.total;
+            const rP = await fhir.get(`/Practitioner?_sort=family`);
+            dataPerf = await rP.data?.entry;
+            tamP = rP.data.total;
 
-        if (tam != 0) {
-            patientRef = data[0].resource.subject.reference;
-        } else {
-            let queryString = window.location.href
-                .split("observationList")[1]
-                .split("/")[1];
-            patientRef = `Patient/${queryString}`;
+            if (tam != 0) {
+                patientRef = data[0].resource.subject.reference;
+            } else {
+                let queryString = window.location.href
+                    .split("observationList")[1]
+                    .split("/")[1];
+                patientRef = `Patient/${queryString}`;
+            }
+        } catch (error) {
+            navigate("/notFound", { replace: true });
         }
     });
 
@@ -107,12 +111,12 @@
 
             <br />
             <button
-                class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                 on:click={searchPatient}>Search</button
             >
 
             <button
-                class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                 on:click={searchClear}>Clear</button
             >
         </mb-select>
@@ -138,12 +142,12 @@
                 {/each}
                 <br />
                 <button
-                    class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                    class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                     on:click={searchPerformer}>Search</button
                 >
 
                 <button
-                    class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                    class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                     on:click={searchClearPerf}>Clear</button
                 >
             {:else}
@@ -164,13 +168,13 @@
     {#if tam != 0}
         {#each data as observation}
             <div
-                class="grid grid-cols-3 bg-lime-200 shadow-lg text-xl text-left py-6"
+                class="grid grid-cols-3 bg-blue-200 shadow-lg text-xl text-left py-6"
             >
                 <div>
                     <br />
                     <Link
                         to={`observationForm/${observation.resource.id}`}
-                        class="text-lime-700 font-bold p-4"
+                        class="text-blue-700 font-bold p-4"
                         ><i class="fa-solid fa-id-card" /> Observation Details
                     </Link>
                 </div>
@@ -188,7 +192,10 @@
             </div>
         {/each}
     {:else}
-        <p>No observation registered or no observation registered matching the search</p>
+        <p>
+            No observation registered or no observation registered matching the
+            search
+        </p>
     {/if}
     <br />
 </div>
@@ -197,13 +204,13 @@
         <Link to={`observationForm?${patientRef}`}>
             <button
                 id="submit"
-                class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                 >New Observation</button
             >
         </Link>
     {/if}
     <Link to={`patientForm/${id}`}>
-        <button class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+        <button class="rounded-xl px-4 py-2 bg-blue-700 text-white"
             >Patient's details</button
         >
     </Link>

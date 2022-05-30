@@ -86,12 +86,12 @@
         {/each}
         <br />
         <button
-            class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+            class="rounded-xl px-4 py-2 bg-blue-700 text-white"
             on:click={searchPatient}>Search</button
         >
 
         <button
-            class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+            class="rounded-xl px-4 py-2 bg-blue-700 text-white"
             on:click={searchClear}>Clear</button
         >
     {:else}
@@ -110,23 +110,23 @@
     {#if tam != 0}
         {#each data as patient}
             <div
-                class="grid grid-cols-3 bg-lime-200 shadow-lg text-xl text-left p-6"
+                class="grid grid-cols-3 bg-blue-200 shadow-lg text-xl text-left p-6"
             >
                 {#if patient.resource.deceasedDateTime != undefined}
                     <div>
                         <Link
                             to={`patientForm/${patient.resource.id}`}
-                            class="text-lime-700 p-4 font-semibold"
+                            class="text-blue-700 p-4 font-semibold"
                             ><i class="fa-solid fa-id-card" /> Patient Details
                         </Link> <br /><br />
                         <Link
                             to={`relevantDetails/${patient.resource.id}`}
-                            class="text-lime-700 p-4 font-semibold"
+                            class="text-blue-700 p-4 font-semibold"
                             ><i class="fa-solid fa-briefcase-medical" /> Relevant Details
                         </Link> <br /><br />
                         <Link
                             to={`observationList/${patient.resource.id}`}
-                            class="text-lime-700 p-4 font-semibold"
+                            class="text-blue-700 p-4 font-semibold"
                             ><i class="fa-solid fa-stethoscope" /> Observations
                         </Link>
                     </div>
@@ -145,17 +145,17 @@
                     <div>
                         <Link
                             to={`patientForm/${patient.resource.id}`}
-                            class="text-lime-700 p-4 font-semibold "
+                            class="text-blue-700 p-4 font-semibold "
                             ><i class="fa-solid fa-id-card" /> Patient Details
                         </Link> <br /><br />
                         <Link
                             to={`relevantDetails/${patient.resource.id}`}
-                            class="text-lime-700 p-4 font-semibold"
+                            class="text-blue-700 p-4 font-semibold"
                             ><i class="fa-solid fa-briefcase-medical" /> Relevant Details
                         </Link> <br /><br />
                         <Link
                             to={`observationList/${patient.resource.id}`}
-                            class="text-lime-700 p-4 font-semibold"
+                            class="text-blue-700 p-4 font-semibold"
                             ><i class="fa-solid fa-stethoscope" /> Observations
                         </Link>
                     </div>

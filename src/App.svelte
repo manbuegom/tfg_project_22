@@ -29,46 +29,47 @@
   import AddSuccessPractRole from "./components/addSuccessPractRole.svelte";
   import EditSuccessPractRole from "./components/editSuccessPractRole.svelte";
   import DeleteSuccessPractRole from "./components/deleteSuccessPractRole.svelte";
+  import NotFound from "./components/notFound.svelte";
 </script>
 
 <TailwindCss />
 
 <Router>
-  <nav class="bg-lime-200 shadow-lg">
+  <nav class="bg-blue-200 shadow-lg">
     <div class="max-w-6xl mx-auto">
       <div class="flex space-x-5">
         <a
           href="/home"
-          class="flex text-gray-700 text-lg font-semibold hover:text-green-800 transition duration-300 items-center py-4 px-2"
+          class="flex text-gray-700 text-lg font-semibold hover:text-blue-800 transition duration-300 items-center py-4 px-2"
         >
           <img
-            src="\src\assets\svelte.png"
+            src="\src\assets\HC-SM.png"
             alt="Logo"
             class="h-12 w-12 mr-2"
-          />HC-M</a
+          /></a
         >
         <div class="hidden md:flex items-center space-x-2">
           <Link
-            class="py-4 px-8 text-gray-700 text-lg font-semibold hover:text-green-800 transition duration-300"
+            class="py-4 px-8 text-gray-700 text-lg font-semibold hover:text-blue-800 transition duration-300"
             to="patients"><i class="fa-solid fa-bars" /> Patients</Link
           >
           <Link
-            class="py-4 px-8 text-gray-700 text-lg font-semibold hover:text-green-800 transition duration-300"
+            class="py-4 px-8 text-gray-700 text-lg font-semibold hover:text-blue-800 transition duration-300"
             to="patientForm"
             ><i class="fa-solid fa-user-plus" /> New Patient
           </Link>
           <Link
-            class="py-4 px-8 text-gray-700 text-lg font-semibold hover:text-green-800 transition duration-300"
+            class="py-4 px-8 text-gray-700 text-lg font-semibold hover:text-blue-800 transition duration-300"
             to="practitioners"
             ><i class="fa-solid fa-bars" /> Practitioners</Link
           >
           <Link
-            class="py-4 px-8 text-gray-700 text-lg font-semibold hover:text-green-800 transition duration-300"
+            class="py-4 px-8 text-gray-700 text-lg font-semibold hover:text-blue-800 transition duration-300"
             to="practitionerForm"
             ><i class="fa-solid fa-user-doctor" /> New Practitioner
           </Link>
           <Link
-            class="py-4 px-8 text-gray-700 text-lg font-semibold hover:text-green-800 transition duration-300"
+            class="py-4 px-8 text-gray-700 text-lg font-semibold hover:text-blue-800 transition duration-300"
             to="practRoleForm"
             ><i class="fa-solid fa-notes-medical" /> New Pract. Role
           </Link>
@@ -84,6 +85,7 @@
     <Route path="patientForm/added" component={AddSuccess} />
     <Route path="patientForm/updated" component={EditSuccess} />
     <Route path="patientForm/deleted" component={DeleteSuccess} />
+    <Route path="notFound" component={NotFound} />
     <Route path="observationForm" component={ObservationRegistration} />
     <Route path="observationForm/:id" component={ObservationRegistration} />
     <Route path="observationList/:id" component={ListObservations} />
@@ -121,7 +123,7 @@
 
 <footer
   id="footer"
-  class="bg-lime-200 shadow md:flex md:items-center md:justify-between md:p-4"
+  class="bg-blue-200 shadow md:flex md:items-center md:justify-between md:p-4"
 >
   <span class="text-sm text-gray-700 sm:text-center dark:text-gray-700"
     >© 2022 FhirApp. All Rights Reserved.

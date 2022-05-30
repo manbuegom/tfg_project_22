@@ -12,15 +12,20 @@
     let queryStringPatientId = window.location.search.split("?")[1];
 
     onMount(async () => {
-        if (id) {
-            const r = await fhir.get(`/Immunization/${id}`);
-            const resource = r.data;
-            form.import(resource);
-            deleteOn = true;
-            referenceIdPatient = resource.subject.reference.split("/")[1];
-            nameString = await getName(`${referenceIdPatient}`);
+        try {
+            if (id) {
+                const r = await fhir.get(`/Immunization/${id}`);
+                const resource = r.data;
+                form.import(resource);
+                deleteOn = true;
+                referenceIdPatient = resource.subject.reference.split("/")[1];
+                nameString = await getName(`${referenceIdPatient}`);
+            }
+
+            nameString = await getName(`${queryStringPatientId}`);
+        } catch (error) {
+            navigate("/notFound", { replace: true });
         }
-        nameString = await getName(`${queryStringPatientId}`);
     });
 
     async function handleSubmit(e: any) {
@@ -55,7 +60,7 @@
     <mb-fhir-form
         id="form"
         bind:this={form}
-        class="flex flex-col gap-4 py-12 text-gray-700 text-lg font-semibold focus-within:text-lime-700"
+        class="flex flex-col gap-4 py-12 text-gray-700 text-lg font-semibold focus-within:text-blue-700"
         on:mb-submit={handleSubmit}
     >
         <mb-context path="resourceType" data="Immunization" />
@@ -66,24 +71,20 @@
             label="Immunization Name"
         />
 
-        <mb-input
-            id="display"
-            path="vaccineCode.text"
-            label="Comments"
-        />
+        <mb-input id="display" path="vaccineCode.text" label="Comments" />
 
         <div>
             <br />
             <mb-submit>
                 <button
                     id="submit"
-                    class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                    class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                     >Submit</button
                 >
             </mb-submit>
 
             <Link to="relevantDetails">
-                <button class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                <button class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                     >Back</button
                 >
             </Link>

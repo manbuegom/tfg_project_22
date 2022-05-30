@@ -135,21 +135,27 @@
     let deleteOn;
     let actualGender;
     let lastGenderRegistered;
-    let hasRole, roleName;
+    let roleName;
     let dataP = [];
     let tam;
     onMount(async () => {
         if (id) {
-            const r = await fhir.get(`/Practitioner/${id}`);
-            const resource = r.data;
-            form.import(resource);
-            lastGenderRegistered = resource.gender;
-            let actualGenderFL = lastGenderRegistered.charAt(0).toUpperCase();
-            actualGender =
-                "" + actualGenderFL + lastGenderRegistered.slice(1) + "";
+            try {
+                const r = await fhir.get(`/Practitioner/${id}`);
+                const resource = r.data;
+                form.import(resource);
+                lastGenderRegistered = resource.gender;
+                let actualGenderFL = lastGenderRegistered
+                    .charAt(0)
+                    .toUpperCase();
+                actualGender =
+                    "" + actualGenderFL + lastGenderRegistered.slice(1) + "";
 
-            deleteOn = true;
-            roleName = resource.qualification[0].identifier[0].value;
+                deleteOn = true;
+                roleName = resource.qualification[0].identifier[0].value;
+            } catch (error) {
+                navigate("/notFound", { replace: true });
+            }
         } else {
             roleName = "Undefined Role";
         }
@@ -202,7 +208,7 @@
     <mb-fhir-form
         id="form"
         bind:this={form}
-        class="flex flex-col gap-4 py-12 text-gray-700 text-lg font-semibold focus-within:text-lime-700"
+        class="flex flex-col gap-4 py-12 text-gray-700 text-lg font-semibold focus-within:text-blue-700"
         on:mb-submit={handleSubmit}
     >
         <mb-context path="resourceType" data="Practitioner" />
@@ -233,17 +239,17 @@
             <div>
                 <p class="text-base py-2">Gender:</p>
                 <button
-                    class="text-white font-semibold bg-lime-700 focus:ring-4 focus:ring-gray-700 rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2"
+                    class="text-white font-semibold bg-blue-700 focus:ring-4 focus:ring-gray-700 rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2"
                     id="male"
                     on:click={handleGender}>Male</button
                 >
                 <button
-                    class="text-white font-semibold bg-lime-700 focus:ring-4 focus:ring-gray-700 rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2"
+                    class="text-white font-semibold bg-blue-700 focus:ring-4 focus:ring-gray-700 rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2"
                     id="female"
                     on:click={handleGender}>Female</button
                 >
                 <button
-                    class="text-white font-semibold bg-lime-700 focus:ring-4 focus:ring-gray-700 rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2"
+                    class="text-white font-semibold bg-blue-700 focus:ring-4 focus:ring-gray-700 rounded-lg text-sm px-3 py-2 text-center mr-2 mb-2"
                     id="other"
                     on:click={handleGender}>Other</button
                 >
@@ -294,6 +300,17 @@
                 on:keypress={checkValid}
             />
         </div>
+        <div class="grid gap-x-8 gap-y-6 grid-cols-4">
+            <p class="text-sm text-gray-500 ">
+                <i
+                    ><u>Check Email field:</u> Symbols '@'' and '.' must be used.</i
+                >
+            </p>
+            <p class="text-sm text-gray-500 ">
+                <i><u>Check contact field:</u> Max lenght: 15</i>
+            </p>
+        </div>
+
         {#if errorOn}
             <p
                 class="text-xl font-semibold bg-red-200 shadow-lg border-4 border-red-700 text-left p-6 text-red-600"
@@ -341,18 +358,18 @@
             <mb-submit>
                 <button
                     id="submit"
-                    class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                    class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                     >Submit</button
                 >
             </mb-submit>
             <Link to="practitioners">
-                <button class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                <button class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                     >Practitioner's list</button
                 >
             </Link>
             {#if deleteOn}
                 <button
-                    class="rounded-xl px-4 py-2 bg-orange-900 text-white"
+                    class="rounded-xl px-4 py-2 bg-red-700 text-white"
                     on:click={handleDelete}
                     >Delete Practitioner Data
                 </button>

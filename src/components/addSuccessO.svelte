@@ -21,7 +21,7 @@
 <div class="flex items-center justify-center">
     <svg
         role="status"
-        class="w-32 h-32 text-lime-200 animate-spin dark:text-lime-200 fill-lime-700"
+        class="w-32 h-32 text-blue-200 animate-spin dark:text-blue-200 fill-blue-700"
         viewBox="0 0 100 101"
         fill="none"
     >

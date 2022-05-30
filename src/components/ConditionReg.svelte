@@ -12,15 +12,19 @@
     let queryStringPatientId = window.location.search.split("?")[1];
 
     onMount(async () => {
-        if (id) {
-            const r = await fhir.get(`/Condition/${id}`);
-            const resource = r.data;
-            form.import(resource);
-            deleteOn = true;
-            referenceIdPatient = resource.subject.reference.split("/")[1];
-            nameString = await getName(`${referenceIdPatient}`);
+        try {
+            if (id) {
+                const r = await fhir.get(`/Condition/${id}`);
+                const resource = r.data;
+                form.import(resource);
+                deleteOn = true;
+                referenceIdPatient = resource.subject.reference.split("/")[1];
+                nameString = await getName(`${referenceIdPatient}`);
+            }
+            nameString = await getName(`${queryStringPatientId}`);
+        } catch (error) {
+            navigate("/notFound", { replace: true });
         }
-        nameString = await getName(`${queryStringPatientId}`);
     });
 
     async function handleSubmit(e: any) {
@@ -29,7 +33,6 @@
             await fhir.put(`/Condition/${id}`, { ...e.detail, id });
             navigate("updated", { replace: true });
         } else {
-            
             e.detail.subject = {
                 display: `${nameString}`,
                 reference: `${queryStringPatientId}`,
@@ -59,7 +62,7 @@
     <mb-fhir-form
         id="form"
         bind:this={form}
-        class="flex flex-col gap-4 py-12 text-gray-700 text-lg font-semibold focus-within:text-lime-700"
+        class="flex flex-col gap-4 py-12 text-gray-700 text-lg font-semibold focus-within:text-blue-700"
         on:mb-submit={handleSubmit}
     >
         <mb-context path="resourceType" data="Condition" />
@@ -75,13 +78,13 @@
             <mb-submit>
                 <button
                     id="submit"
-                    class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                    class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                     >Submit</button
                 >
             </mb-submit>
 
             <Link to={`relevantDetails/${queryStringPatientId.split("/")[1]}`}>
-                <button class="rounded-xl px-4 py-2 bg-lime-700 text-white"
+                <button class="rounded-xl px-4 py-2 bg-blue-700 text-white"
                     >Back</button
                 >
             </Link>
