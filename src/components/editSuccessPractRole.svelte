@@ -3,7 +3,7 @@
 
     function redireccionar() {
         setTimeout(() => {
-            navigate("/patients", { replace: true });
+            navigate("/practRoleForm", { replace: true });
         }, 2000);
     }
 
@@ -12,10 +12,11 @@
 
 <br /><br />
 <br /><br />
-<h1 class="text-center text-5xl">Patient Successfully Registered!</h1>
+<h1 class="text-center text-5xl">Practitioner Role Successfully Updated!</h1>
 
 <br /><br />
 <br /><br />
+
 <div class="flex items-center justify-center">
     <svg
         role="status"

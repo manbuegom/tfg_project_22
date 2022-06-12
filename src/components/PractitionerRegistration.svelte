@@ -8,7 +8,6 @@
     let loading: boolean = false;
     export let id;
     let form;
-    let errorDate = false;
     async function handleSubmit(e: any) {
         loading = true;
         if (id) {
@@ -24,15 +23,45 @@
                     document.getElementById("genderAux")
                 )).value;
             }
-            if (e.detail.deceasedDateTime == undefined) {
-                await fhir.put(`/Patient/${id}`, { ...e.detail, id });
-                navigate("updated", { replace: true });
-            } else if (e.detail.deceasedDateTime >= e.detail.birthDate) {
-                await fhir.put(`/Patient/${id}`, { ...e.detail, id });
-                navigate("updated", { replace: true });
+
+            if (
+                e.detail.qualification[0].identifier[0].value.value !=
+                    "Undefined Role" &&
+                e.detail.qualification[0].identifier[0].value.value != undefined
+            ) {
+                (e.detail.identifier = [
+                    {
+                        value: `${e.detail.qualification[0].identifier[0].value.value}`,
+                    },
+                ]),
+                    (e.detail.qualification = [
+                        {
+                            identifier: [
+                                {
+                                    value: `${e.detail.qualification[0].identifier[0].value.value}`,
+                                },
+                            ],
+                        },
+                    ]);
             } else {
-                errorDate = true;
+                (e.detail.identifier = [
+                    {
+                        value: `${roleName}`,
+                    },
+                ]),
+                    (e.detail.qualification = [
+                        {
+                            identifier: [
+                                {
+                                    value: `${roleName}`,
+                                },
+                            ],
+                        },
+                    ]);
             }
+
+            await fhir.put(`/Practitioner/${id}`, { ...e.detail, id });
+            navigate("updated", { replace: true });
         } else {
             if (
                 (<HTMLInputElement>document.getElementById("genderAux"))
@@ -44,23 +73,57 @@
                     document.getElementById("genderAux")
                 )).value;
             }
-            await fhir.post("/Patient", e.detail);
-            navigate("patientForm/added", { replace: true });
+            if (e.detail.qualification != undefined) {
+                (e.detail.identifier = [
+                    {
+                        value: `${e.detail.qualification[0].identifier[0].value.value}`,
+                    },
+                ]),
+                    (e.detail.qualification = [
+                        {
+                            identifier: [
+                                {
+                                    value: `${e.detail.qualification[0].identifier[0].value.value}`,
+                                },
+                            ],
+                        },
+                    ]);
+            } else {
+                (e.detail.identifier = [
+                    {
+                        value: `${roleName}`,
+                    },
+                ]),
+                    (e.detail.qualification = [
+                        {
+                            identifier: [
+                                {
+                                    value: `${roleName}`,
+                                },
+                            ],
+                        },
+                    ]);
+            }
+
+            await fhir.post("/Practitioner", e.detail);
+            navigate("practitionerForm/added", { replace: true });
         }
         loading = false;
     }
     async function handleDelete(e: any) {
         loading = true;
+
         if (id) {
             try {
-                await fhir.delete(`/Patient/${id}`, { ...e.detail, id });
+                await fhir.delete(`/Practitioner/${id}`, { ...e.detail, id });
                 navigate("deleted", { replace: true });
             } catch (e) {
                 window.alert(
-                    "The patient has observation(s), condition(s) or immunization(s) registered!. Delete them before doing this again."
+                    "The practitioner has observation(s) registered!. Please, delete them before doing this again."
                 );
             }
         }
+
         loading = false;
     }
 
@@ -69,60 +132,37 @@
             e.target.id;
     }
 
-    let observationOn;
     let deleteOn;
     let actualGender;
     let lastGenderRegistered;
+    let roleName;
+    let dataP = [];
+    let tam;
     onMount(async () => {
         if (id) {
             try {
-                const r = await fhir.get(`/Patient/${id}`);
+                const r = await fhir.get(`/Practitioner/${id}`);
                 const resource = r.data;
                 form.import(resource);
                 lastGenderRegistered = resource.gender;
                 let actualGenderFL = lastGenderRegistered
                     .charAt(0)
                     .toUpperCase();
-                disableFormIfDiceased(resource.deceasedDateTime);
                 actualGender =
                     "" + actualGenderFL + lastGenderRegistered.slice(1) + "";
 
                 deleteOn = true;
-                observationOn = true;
+                roleName = resource.qualification[0].identifier[0].value;
             } catch (error) {
                 navigate("/notFound", { replace: true });
             }
         } else {
-            (<HTMLInputElement>document.getElementById("deceasedDate")).hidden =
-                true;
+            roleName = "Undefined Role";
         }
+        const p = await fhir.get("/PractitionerRole");
+        dataP = await p.data?.entry;
+        tam = p.data.total;
     });
-
-    let deceasedCheck;
-    async function disableFormIfDiceased(e: any) {
-        if (e != undefined) {
-            deceasedCheck = true;
-            (<HTMLInputElement>document.getElementById("name")).disabled = e;
-            (<HTMLInputElement>document.getElementById("family")).disabled = e;
-            (<HTMLInputElement>document.getElementById("birthdate")).disabled =
-                e;
-            (<HTMLInputElement>(
-                document.getElementById("deceasedDate")
-            )).disabled = e;
-            (<HTMLInputElement>document.getElementById("male")).disabled = e;
-            (<HTMLInputElement>document.getElementById("female")).disabled = e;
-            (<HTMLInputElement>document.getElementById("other")).disabled = e;
-            (<HTMLInputElement>document.getElementById("address")).disabled = e;
-            (<HTMLInputElement>document.getElementById("city")).disabled = e;
-            (<HTMLInputElement>document.getElementById("country")).disabled = e;
-            (<HTMLInputElement>document.getElementById("postalCode")).disabled =
-                e;
-            (<HTMLInputElement>document.getElementById("emailCheck")).disabled =
-                e;
-            (<HTMLInputElement>document.getElementById("contact")).disabled = e;
-            (<HTMLInputElement>document.getElementById("submit")).disabled = e;
-        }
-    }
 
     let errorOn = false;
     async function checkValid(e: any) {
@@ -162,7 +202,7 @@
 </script>
 
 <h1 class="text-center text-4xl text-gray-700 font-semibold mb-16">
-    Patient Registration
+    Practitioner Registration
 </h1>
 <div>
     <mb-fhir-form
@@ -171,8 +211,8 @@
         class="flex flex-col gap-4 py-12 text-gray-700 text-lg font-semibold focus-within:text-blue-700"
         on:mb-submit={handleSubmit}
     >
-        <mb-context path="resourceType" data="Patient" />
-        <div class="grid gap-x-24 gap-y-6 grid-cols-2">
+        <mb-context path="resourceType" data="Practitioner" />
+        <div class="grid gap-x-8 gap-y-6 grid-cols-2">
             <mb-input required id="name" path="name[0].given" label="Name" />
             <mb-input
                 required
@@ -182,6 +222,12 @@
             />
             <div>
                 <mb-input hidden path="gender" id="genderAux" />
+                <mb-input hidden path="identifier.value" id="identifier" />
+                <mb-input
+                    hidden
+                    path="qualification[0].identifier[0].value"
+                    id="quaAux"
+                />
                 <mb-date
                     required
                     id="birthdate"
@@ -189,26 +235,6 @@
                     path="birthDate"
                 />
                 <br />
-                <mb-date
-                    id="deceasedDate"
-                    label="Death Date"
-                    path="deceasedDateTime"
-                />
-                <p class="text-sm text-gray-500 mt-4 ">
-                    <i
-                        ><u>Important!</u> After filling and submiting this field,
-                        the form will no longer be editable.</i
-                    >
-                </p>
-                {#if errorDate}
-                    <br />
-                    <p
-                        class="text-xl font-semibold bg-red-200 shadow-lg border-4 border-red-700 text-left p-6 text-red-600"
-                    >
-                        <u>Check date field:</u> <br /><br /> Deceased date must
-                        be after birth date.
-                    </p>
-                {/if}
             </div>
             <div>
                 <p class="text-base py-2">Gender:</p>
@@ -227,24 +253,20 @@
                     id="other"
                     on:click={handleGender}>Other</button
                 >
-
                 {#if deleteOn}
                     <p class="text-base py-2">
                         Last gender registered: {actualGender}.
                     </p>
                 {/if}
             </div>
+        </div>
+        <br />
+        <div class="grid gap-x-8 gap-y-6 grid-cols-4">
             <mb-input
                 required
                 id="country"
                 path="address[0].country"
                 label="Country"
-            />
-            <mb-input
-                required
-                id="address"
-                path="address[0].line"
-                label="Address (Street, Nº)"
             />
             <mb-input
                 required
@@ -254,9 +276,21 @@
             />
             <mb-input
                 required
+                id="address"
+                path="address[0].line"
+                label="Address (Street, Nº)"
+            />
+            <mb-input
+                required
                 id="postalCode"
                 path="address[0].postalCode"
                 label="Postal Code"
+            />
+            <mb-input
+                path="telecom[1].value"
+                label="Email"
+                id="emailCheck"
+                on:keypress={checkValidEmail}
             />
             <mb-count
                 required
@@ -265,21 +299,18 @@
                 label="Contact"
                 on:keypress={checkValid}
             />
-            <mb-input
-                path="telecom[1].value"
-                label="Email"
-                id="emailCheck"
-                on:keypress={checkValidEmail}
-            />
-            <p class="text-sm text-gray-500 ">
-                <i><u>Check contact field:</u> Max lenght: 15</i>
-            </p>
+        </div>
+        <div class="grid gap-x-8 gap-y-6 grid-cols-4">
             <p class="text-sm text-gray-500 ">
                 <i
                     ><u>Check Email field:</u> Symbols '@'' and '.' must be used.</i
                 >
             </p>
+            <p class="text-sm text-gray-500 ">
+                <i><u>Check contact field:</u> Max lenght: 15</i>
+            </p>
         </div>
+
         {#if errorOn}
             <p
                 class="text-xl font-semibold bg-red-200 shadow-lg border-4 border-red-700 text-left p-6 text-red-600"
@@ -291,9 +322,37 @@
             <p
                 class="text-xl font-semibold bg-red-200 shadow-lg border-4 border-red-700 text-left p-6 text-red-600"
             >
-                <u>Check email field:</u> <br /><br /> Either '@' or '.' missing.
+                <u>Check email field:</u> <br /><br /> Either '@' or '.' are missing.
             </p>
         {/if}
+        <div>
+            <br />
+            {#if deleteOn}
+                <p class="text-2xl py-2">Practitioner Role: {roleName}</p>
+                <br />
+            {:else}
+                <p class="text-base py-2">Practitioner Role</p>
+                <br />
+            {/if}
+
+            <mb-select
+                id="practRole"
+                path="qualification[0].identifier[0].value"
+                placeholder="Select a role or update the current one"
+            >
+                {#if tam != 0}
+                    {#each dataP as practRole}
+                        <mb-option
+                            value={`${practRole.resource.specialty[0].coding[0].display}`}
+                            label={`${practRole.resource.specialty[0].coding[0].display}`}
+                        />
+                    {/each}
+                {:else}
+                    <br />
+                    <p>No registered roles.</p>
+                {/if}
+            </mb-select>
+        </div>
         <div>
             <br />
             <mb-submit>
@@ -303,26 +362,16 @@
                     >Submit</button
                 >
             </mb-submit>
-            <Link to="patients">
+            <Link to="practitioners">
                 <button class="rounded-xl px-4 py-2 bg-blue-700 text-white"
-                    >Patient's list</button
+                    >Practitioner's list</button
                 >
             </Link>
-            {#if observationOn}
-                {#if !deceasedCheck}
-                    <Link to="observationForm?Patient/{id}">
-                        <button
-                            class="rounded-xl px-4 py-2 bg-blue-500 text-white"
-                            >Add Observation
-                        </button>
-                    </Link>
-                {/if}
-            {/if}
             {#if deleteOn}
                 <button
                     class="rounded-xl px-4 py-2 bg-red-700 text-white"
                     on:click={handleDelete}
-                    >Delete Patient Data
+                    >Delete Practitioner Data
                 </button>
             {/if}
         </div>

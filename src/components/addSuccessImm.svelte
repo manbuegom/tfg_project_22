@@ -1,9 +1,11 @@
 <script lang="ts">
+    let queryString = window.location.search.split("?")[1];
+
     import { navigate } from "svelte-routing";
 
     function redireccionar() {
         setTimeout(() => {
-            navigate("/patients", { replace: true });
+            navigate(`/relevantDetails/${queryString}`, { replace: true });
         }, 2000);
     }
 
@@ -12,7 +14,7 @@
 
 <br /><br />
 <br /><br />
-<h1 class="text-center text-5xl">Patient Successfully Registered!</h1>
+<h1 class="text-center text-5xl">Immunization Successfully Registered!</h1>
 
 <br /><br />
 <br /><br />
